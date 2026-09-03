@@ -1,5 +1,11 @@
 <template>
-  <b-navbar data-cy="navbar" toggleable="md" variant="dark" data-bs-theme="dark">
+  <b-navbar
+    data-cy="navbar"
+    toggleable="md"
+    variant="dark"
+    data-bs-theme="dark"
+    :class="{ 'navbar-user-theme': !hasAnyAuthority('ROLE_ADMIN') }"
+  >
     <b-navbar-brand class="logo" to="/">
       <span class="logo-img"></span>
       <span class="navbar-title">{{ t$('global.title') }}</span> <span class="navbar-version">{{ version }}</span>
@@ -16,25 +22,11 @@
     </b-navbar-toggle>
 
     <b-collapse is-nav id="header-tabs">
-      <b-navbar-nav class="ms-auto">
+      <b-navbar-nav class="ms-auto" v-if="hasAnyAuthority('ROLE_ADMIN')">
         <b-nav-item to="/" exact>
           <span>
             <font-awesome-icon icon="fa-solid fa-home" />
             <span>{{ t$('global.menu.home') }}</span>
-          </span>
-        </b-nav-item>
-        <b-nav-item
-          :to="{ name: 'ShoppingCart' }"
-          v-if="authenticated && !hasAnyAuthority('ROLE_ADMIN')"
-          data-cy="navbarCart"
-          class="navbar-cart"
-        >
-          <span>
-            <font-awesome-icon icon="cart-shopping" />
-            <span>{{ t$('global.menu.cart') }}</span>
-            <span class="badge rounded-pill bg-danger navbar-cart-badge" v-if="cartStore.totalItemCount > 0">
-              {{ cartStore.totalItemCount }}
-            </span>
           </span>
         </b-nav-item>
         <b-nav-item-dropdown
@@ -145,6 +137,71 @@
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
+
+      <b-navbar-nav class="ms-auto navbar-user-nav" v-else>
+        <b-nav-item to="/" exact>
+          <span>
+            <font-awesome-icon icon="fa-solid fa-home" />
+            <span>{{ t$('global.menu.home') }}</span>
+          </span>
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'ShoppingCart' }" v-if="authenticated" data-cy="navbarCart" class="navbar-cart">
+          <span>
+            <font-awesome-icon icon="cart-shopping" />
+            <span>{{ t$('global.menu.cart') }}</span>
+            <span class="badge rounded-pill bg-danger navbar-cart-badge" v-if="cartStore.totalItemCount > 0">
+              {{ cartStore.totalItemCount }}
+            </span>
+          </span>
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'Review' }" v-if="authenticated" data-cy="navbarReview">
+          <span>
+            <font-awesome-icon icon="star" />
+            <span>{{ t$('global.menu.entities.review') }}</span>
+          </span>
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'Wishlist' }" v-if="authenticated" data-cy="navbarWishlist">
+          <span>
+            <font-awesome-icon icon="heart" />
+            <span>{{ t$('global.menu.entities.wishlist') }}</span>
+          </span>
+        </b-nav-item>
+        <b-nav-item-dropdown
+          right
+          id="account-menu"
+          :class="{ 'router-link-active': subIsActive('/account') }"
+          active-class="active"
+          class="pointer"
+          data-cy="accountMenu"
+        >
+          <template #button-content>
+            <span class="navbar-dropdown-menu">
+              <font-awesome-icon icon="user" />
+              <span class="no-bold">{{ t$('global.menu.account.main') }}</span>
+            </span>
+          </template>
+          <b-dropdown-item data-cy="settings" to="/account/settings" v-if="authenticated" active-class="active">
+            <font-awesome-icon icon="wrench" />
+            <span>{{ t$('global.menu.account.settings') }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item data-cy="passwordItem" to="/account/password" v-if="authenticated" active-class="active">
+            <font-awesome-icon icon="lock" />
+            <span>{{ t$('global.menu.account.password') }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item data-cy="logout" v-if="authenticated" @click="logout()" id="logout" active-class="active">
+            <font-awesome-icon icon="sign-out-alt" />
+            <span>{{ t$('global.menu.account.logout') }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item data-cy="login" v-if="!authenticated" @click="showLogin()" id="login" active-class="active">
+            <font-awesome-icon icon="sign-in-alt" />
+            <span>{{ t$('global.menu.account.login') }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item data-cy="register" to="/register" id="register" v-if="!authenticated" active-class="active">
+            <font-awesome-icon icon="user-plus" />
+            <span>{{ t$('global.menu.account.register') }}</span>
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
     </b-collapse>
   </b-navbar>
 </template>
@@ -209,5 +266,29 @@
   width: 100%;
   filter: drop-shadow(0 0 0.05rem white);
   margin: 0 5px;
+}
+
+/* ==========================================================================
+  User-facing navbar theme (professional, minimalistic, blue) - admin navbar
+  keeps the default dark theme untouched.
+  ========================================================================== */
+.navbar-user-theme {
+  background: linear-gradient(90deg, #1e3a8a, #1d4ed8) !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+}
+
+.navbar-user-nav :deep(.nav-link) {
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  transition: background-color 0.15s ease;
+}
+
+.navbar-user-nav :deep(.nav-link:hover),
+.navbar-user-nav :deep(.nav-link.router-link-active) {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.navbar-user-nav .navbar-cart-badge {
+  background-color: #ef4444 !important;
 }
 </style>

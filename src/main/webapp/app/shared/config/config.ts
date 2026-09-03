@@ -34,6 +34,7 @@ import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt';
 import { faSort } from '@fortawesome/free-solid-svg-icons/faSort';
 import { faSortDown } from '@fortawesome/free-solid-svg-icons/faSortDown';
 import { faSortUp } from '@fortawesome/free-solid-svg-icons/faSortUp';
+import { faStar } from '@fortawesome/free-solid-svg-icons/faStar';
 import { faSync } from '@fortawesome/free-solid-svg-icons/faSync';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons/faTachometerAlt';
 import { faTags } from '@fortawesome/free-solid-svg-icons/faTags';
@@ -95,6 +96,7 @@ export function initFortAwesome(vue: App) {
     faSort,
     faSortDown,
     faSortUp,
+    faStar,
     faSync,
     faTachometerAlt,
     faTags,
