@@ -1,0 +1,116 @@
+// ==========================================
+// 1. ENUMS (Standardized Statuses)
+// ==========================================
+enum ProductStatus { IN_STOCK, OUT_OF_STOCK, PRE_ORDER }
+enum OrderStatus { PENDING, PAID, PROCESSING, SHIPPED, DELIVERED, CANCELLED }
+
+// ==========================================
+// 2. THE CATALOG MODULE
+// ==========================================
+entity Category {
+    name String required maxlength(100)
+    description String
+}
+
+entity Product {
+    sku String required unique minlength(3)
+    name String required maxlength(255)
+    description TextBlob required
+    price BigDecimal required min(0)
+    stockQuantity Integer required min(0)
+    status ProductStatus required
+    image ImageBlob
+}
+
+// ==========================================
+// 3. THE ACTIVE CART MODULE
+// ==========================================
+entity ShoppingCart {
+    createdDate Instant required
+}
+
+entity CartItem {
+    quantity Integer required min(1)
+}
+
+// ==========================================
+// 4. THE ORDER & CHECKOUT MODULE
+// ==========================================
+entity CustomerOrder {
+    placedDate Instant required
+    status OrderStatus required
+    totalAmount BigDecimal required min(0)
+}
+
+entity OrderItem {
+    quantity Integer required min(1)
+    priceAtPurchase BigDecimal required min(0) 
+}
+
+entity Address {
+    addressLine1 String required
+    addressLine2 String
+    city String required
+    state String required
+    postalCode String required
+    country String required
+}
+
+// ==========================================
+// 5. THE ENGAGEMENT MODULE (Reviews & Wishlist)
+// ==========================================
+entity Review {
+    rating Integer required min(1) max(5)
+    comment TextBlob
+    reviewDate Instant required
+}
+
+entity Wishlist {
+    createdDate Instant required
+}
+
+// ==========================================
+// 6. RELATIONSHIPS (The Architecture)
+// ==========================================
+
+relationship ManyToOne {
+    // Catalog & Engagement
+    Product{category(name)} to Category
+    Review{product(name)} to Product
+    Review{user(login)} to User with builtInEntity
+    
+    // Cart & Order links to Products
+    CartItem{product(name)} to Product
+    OrderItem{product(name)} to Product
+    
+    // Link Orders to the built-in JHipster User
+    CustomerOrder{user(login)} to User with builtInEntity
+}
+
+relationship OneToMany {
+    ShoppingCart{cartItem} to CartItem{cart}
+    CustomerOrder{orderItem} to OrderItem{order}
+}
+
+relationship OneToOne {
+    ShoppingCart{user(login)} to User with builtInEntity
+    Wishlist{user(login)} to User with builtInEntity
+    
+    // FIX: Added {shippingOrder} and {billingOrder} to explicitly name the reverse links
+    CustomerOrder{shippingAddress} to Address{shippingOrder}
+    CustomerOrder{billingAddress} to Address{billingOrder}
+}
+
+relationship ManyToMany {
+    // A Wishlist can have many Products, and a Product can be in many Wishlists
+    Wishlist{product(name)} to Product
+}
+
+// ==========================================
+// 7. GENERATION OPTIONS
+// ==========================================
+dto * with mapstruct
+service * with serviceClass
+// Added Review to pagination so you don't load 1,000 reviews at once on a product page
+paginate Product, CustomerOrder, Review with pagination
+filter Product, CustomerOrder

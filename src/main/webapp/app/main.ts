@@ -15,7 +15,7 @@ import { initBootstrapVue } from '@/shared/config/config-bootstrap-vue';
 import JhiItemCount from '@/shared/jhi-item-count.vue';
 import { AUTHENTICATION_TOKEN_KEY } from '@/shared/jhipster/constants';
 import JhiSortIndicator from '@/shared/sort/jhi-sort-indicator.vue';
-import { useStore, useTranslationStore } from '@/store';
+import { useCartStore, useStore, useTranslationStore } from '@/store';
 
 import App from './app.vue';
 import router from './router';
@@ -34,6 +34,7 @@ const app = createApp({
   setup() {
     const { hideLogin, showLogin } = useLoginModal();
     const store = useStore();
+    const cartStore = useCartStore();
     const accountService = new AccountService(store);
     const i18n = useI18n();
     const translationStore = useTranslationStore();
@@ -63,6 +64,18 @@ const app = createApp({
       value => {
         translationService.setLocale(value);
       },
+    );
+
+    watch(
+      () => store.authenticated,
+      async value => {
+        if (value) {
+          await cartStore.fetchCart();
+        } else {
+          cartStore.reset();
+        }
+      },
+      { immediate: true },
     );
 
     onMounted(async () => {

@@ -1,0 +1,218 @@
+// Minimalistic blue theme for the customer-facing "My Cart" page.
+// Scoped to .cart-page only so the admin shopping-cart table is unaffected.
+.cart-page {
+  --cart-blue: #1d4ed8;
+  --cart-blue-dark: #1e3a8a;
+  --cart-blue-light: #3b82f6;
+  --cart-blue-soft: #eff4ff;
+  --cart-ink: #0f172a;
+  --cart-muted: #64748b;
+  --cart-border: #e2e8f0;
+  --cart-radius: 12px;
+
+  color: var(--cart-ink);
+
+  .cart-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-title {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .cart-continue-link {
+    color: var(--cart-blue);
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--cart-blue-dark);
+    }
+  }
+
+  .cart-loading {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 0;
+    color: var(--cart-blue);
+  }
+
+  .cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem;
+    color: var(--cart-muted);
+  }
+
+  .cart-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--cart-blue-light);
+  }
+
+  .cart-btn-primary {
+    margin-top: 1rem;
+    background: var(--cart-blue);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+
+    &:hover {
+      background: var(--cart-blue-dark);
+      color: #fff;
+    }
+  }
+
+  .cart-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .cart-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--cart-border);
+    border-radius: var(--cart-radius);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .cart-line {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+
+    & + & {
+      border-top: 1px solid var(--cart-border);
+    }
+  }
+
+  .cart-line-media {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--cart-blue-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .cart-line-media-placeholder {
+    color: var(--cart-blue-light);
+    font-size: 1.4rem;
+  }
+
+  .cart-line-info {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .cart-line-name {
+    font-weight: 600;
+    color: var(--cart-ink);
+  }
+
+  .cart-line-price {
+    color: var(--cart-muted);
+    font-size: 0.875rem;
+  }
+
+  .cart-line-qty {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+  }
+
+  .cart-qty-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--cart-border);
+    background: #fff;
+    color: var(--cart-blue);
+    font-weight: 600;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background: var(--cart-blue-soft);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  .cart-qty-value {
+    min-width: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .cart-line-subtotal {
+    flex: 0 0 auto;
+    width: 80px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--cart-blue-dark);
+  }
+
+  .cart-line-remove {
+    flex: 0 0 auto;
+    border: none;
+    background: none;
+    color: var(--cart-muted);
+    padding: 0.25rem 0.5rem;
+
+    &:hover:not(:disabled) {
+      color: #dc2626;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  .cart-summary {
+    border: 1px solid var(--cart-border);
+    border-radius: var(--cart-radius);
+    background: #fff;
+    padding: 1rem 1.25rem;
+  }
+
+  .cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+  }
+
+  .cart-summary-total {
+    color: var(--cart-blue-dark);
+    font-size: 1.25rem;
+  }
+}

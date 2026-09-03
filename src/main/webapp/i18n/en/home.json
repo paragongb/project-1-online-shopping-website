@@ -14,6 +14,25 @@
       "follow": "follow {'@'}jhipster on Twitter"
     },
     "like": "If you like JHipster, don't forget to give us a star on",
-    "github": "GitHub"
+    "github": "GitHub",
+    "addedToCart": "{ name } was added to your cart",
+    "landing": {
+      "eyebrow": "New Season Arrivals",
+      "title": "Wear Your Story",
+      "subtitle": "Discover premium, everyday clothing designed for comfort and made to last \u2014 from casual essentials to statement pieces.",
+      "shopNow": "Shop Now",
+      "browseCategories": "Browse Categories",
+      "trust": {
+        "shipping": "Fast, Reliable Shipping",
+        "payment": "Secure Payment",
+        "returns": "Easy Returns",
+        "pricing": "Honest, Fair Pricing"
+      },
+      "categoriesTitle": "Shop by Category",
+      "featuredTitle": "New Arrivals",
+      "viewAll": "View All",
+      "ctaTitle": "Ready to Refresh Your Wardrobe?",
+      "ctaSubtitle": "Explore the full collection and find your next favorite piece."
+    }
   }
 }

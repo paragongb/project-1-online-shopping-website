@@ -1,0 +1,305 @@
+// Minimalistic blue e-commerce theme for the customer landing page.
+// Scoped to .landing-page only so the admin/JHipster default home page is unaffected.
+.landing-page {
+  --landing-blue: #1d4ed8;
+  --landing-blue-dark: #1e3a8a;
+  --landing-blue-light: #3b82f6;
+  --landing-blue-soft: #eff4ff;
+  --landing-ink: #0f172a;
+  --landing-muted: #64748b;
+  --landing-border: #e2e8f0;
+  --landing-radius: 16px;
+
+  color: var(--landing-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding-bottom: 1rem;
+
+  .landing-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    background: linear-gradient(135deg, var(--landing-blue-dark), var(--landing-blue));
+    border-radius: var(--landing-radius);
+    padding: 3rem 2.5rem;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .landing-hero-text {
+    max-width: 560px;
+  }
+
+  .landing-hero-eyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #bfdbfe;
+    margin-bottom: 0.75rem;
+  }
+
+  .landing-hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .landing-hero-subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.05rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .landing-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .landing-hero-visual {
+    flex: 0 0 auto;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4.5rem;
+    color: #fff;
+  }
+
+  .landing-btn-primary {
+    background: #fff;
+    color: var(--landing-blue-dark);
+    border-radius: 999px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+
+    &:hover {
+      background: var(--landing-blue-soft);
+      color: var(--landing-blue-dark);
+    }
+  }
+
+  .landing-btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 999px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+  }
+
+  .landing-trust {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid var(--landing-border);
+    border-radius: var(--landing-radius);
+    padding: 1.5rem;
+  }
+
+  .landing-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--landing-ink);
+    font-weight: 500;
+
+    svg {
+      color: var(--landing-blue);
+      font-size: 1.4rem;
+      flex: 0 0 auto;
+    }
+  }
+
+  .landing-section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .landing-section-title {
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+  }
+
+  .landing-section-header .landing-section-title {
+    margin-bottom: 0;
+  }
+
+  .landing-view-all {
+    color: var(--landing-blue);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--landing-blue-dark);
+    }
+  }
+
+  .landing-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .landing-category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    background: #fff;
+    border: 1px solid var(--landing-border);
+    border-radius: var(--landing-radius);
+    padding: 1.5rem 1rem;
+    color: var(--landing-ink);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      transform 0.15s ease,
+      border-color 0.15s ease;
+
+    svg {
+      font-size: 1.6rem;
+      color: var(--landing-blue);
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--landing-blue-light);
+      color: var(--landing-ink);
+    }
+  }
+
+  .landing-loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+    color: var(--landing-blue);
+  }
+
+  .landing-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .landing-product-card {
+    background: #fff;
+    border: 1px solid var(--landing-border);
+    border-radius: var(--landing-radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+  }
+
+  .landing-product-media {
+    display: block;
+    aspect-ratio: 1 / 1;
+    background: var(--landing-blue-soft);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .landing-product-media-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--landing-blue-light);
+    font-size: 2rem;
+  }
+
+  .landing-product-body {
+    padding: 0.8rem 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .landing-product-name {
+    font-weight: 600;
+    color: var(--landing-ink);
+  }
+
+  .landing-product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .landing-product-price {
+    font-weight: 700;
+    color: var(--landing-blue-dark);
+  }
+
+  .landing-btn-add-cart {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--landing-blue);
+    background: #fff;
+    color: var(--landing-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+      background: var(--landing-blue);
+      color: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .landing-cta {
+    text-align: center;
+    background: var(--landing-blue-soft);
+    border-radius: var(--landing-radius);
+    padding: 2.5rem 1.5rem;
+
+    h2 {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--landing-muted);
+      margin-bottom: 1.25rem;
+    }
+  }
+}

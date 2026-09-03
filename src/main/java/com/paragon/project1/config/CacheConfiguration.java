@@ -44,6 +44,19 @@ public class CacheConfiguration {
             createCache(cm, com.paragon.project1.domain.User.class.getName());
             createCache(cm, com.paragon.project1.domain.Authority.class.getName());
             createCache(cm, com.paragon.project1.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.paragon.project1.domain.Category.class.getName());
+            createCache(cm, com.paragon.project1.domain.Product.class.getName());
+            createCache(cm, com.paragon.project1.domain.Product.class.getName() + ".wishlists");
+            createCache(cm, com.paragon.project1.domain.ShoppingCart.class.getName());
+            createCache(cm, com.paragon.project1.domain.ShoppingCart.class.getName() + ".cartItems");
+            createCache(cm, com.paragon.project1.domain.CartItem.class.getName());
+            createCache(cm, com.paragon.project1.domain.CustomerOrder.class.getName());
+            createCache(cm, com.paragon.project1.domain.CustomerOrder.class.getName() + ".orderItems");
+            createCache(cm, com.paragon.project1.domain.OrderItem.class.getName());
+            createCache(cm, com.paragon.project1.domain.Address.class.getName());
+            createCache(cm, com.paragon.project1.domain.Review.class.getName());
+            createCache(cm, com.paragon.project1.domain.Wishlist.class.getName());
+            createCache(cm, com.paragon.project1.domain.Wishlist.class.getName() + ".products");
             // jhipster-needle-ehcache-add-entry
         };
     }

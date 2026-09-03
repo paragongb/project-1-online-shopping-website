@@ -1,0 +1,47 @@
+{
+  "project1OnlineShoppingWebsiteApp": {
+    "product": {
+      "home": {
+        "title": "Products",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Product",
+        "createOrEditLabel": "Create or edit a Product",
+        "notFound": "No Products found"
+      },
+      "shop": {
+        "subtitle": "Browse our catalog and find your next favorite item.",
+        "searchPlaceholder": "Search products...",
+        "sortBy": "Sort by",
+        "sortNameAsc": "Name (A-Z)",
+        "sortNameDesc": "Name (Z-A)",
+        "sortPriceAsc": "Price (low to high)",
+        "sortPriceDesc": "Price (high to low)",
+        "viewDetails": "View Details",
+        "close": "Close",
+        "addToCart": "Add to Cart",
+        "addingToCart": "Adding...",
+        "outOfStock": "Out of Stock",
+        "addedToCart": "{ name } was added to your cart"
+      },
+      "created": "A new Product is created with identifier { param }",
+      "updated": "A Product is updated with identifier { param }",
+      "deleted": "A Product is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Product { id }?"
+      },
+      "detail": {
+        "title": "Product"
+      },
+      "id": "ID",
+      "sku": "Sku",
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "stockQuantity": "Stock Quantity",
+      "status": "Status",
+      "image": "Image",
+      "category": "Category",
+      "wishlist": "Wishlist"
+    }
+  }
+}

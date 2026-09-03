@@ -1,0 +1,32 @@
+{
+  "project1OnlineShoppingWebsiteApp": {
+    "shoppingCart": {
+      "home": {
+        "title": "Shopping Carts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Shopping Cart",
+        "createOrEditLabel": "Create or edit a Shopping Cart",
+        "notFound": "No Shopping Carts found"
+      },
+      "created": "A new Shopping Cart is created with identifier { param }",
+      "updated": "A Shopping Cart is updated with identifier { param }",
+      "deleted": "A Shopping Cart is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Shopping Cart { id }?"
+      },
+      "detail": {
+        "title": "Shopping Cart"
+      },
+      "id": "ID",
+      "createdDate": "Created Date",
+      "user": "User",
+      "cartItem": "Cart Item",
+      "myCart": {
+        "title": "My Cart",
+        "continueShopping": "Continue Shopping",
+        "empty": "Your cart is empty",
+        "total": "Total"
+      }
+    }
+  }
+}

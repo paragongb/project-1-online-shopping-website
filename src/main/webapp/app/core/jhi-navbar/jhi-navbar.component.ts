@@ -9,7 +9,7 @@ import { useLoginModal } from '@/account/login-modal';
 import EntitiesMenu from '@/entities/entities-menu.vue';
 import languages from '@/shared/config/languages';
 import { AUTHENTICATION_TOKEN_KEY } from '@/shared/jhipster/constants';
-import { useStore } from '@/store';
+import { useCartStore, useStore } from '@/store';
 
 export default defineComponent({
   name: 'JhiNavbar',
@@ -26,6 +26,7 @@ export default defineComponent({
 
     const router = useRouter();
     const store = useStore();
+    const cartStore = useCartStore();
 
     const version = `v${APP_VERSION}`;
     const hasAnyAuthorityValues: Ref = ref({});
@@ -63,6 +64,7 @@ export default defineComponent({
       openAPIEnabled,
       inProduction,
       authenticated,
+      cartStore,
       t$: useI18n().t,
     };
   },

@@ -4,10 +4,20 @@
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"https://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "home": "Home",
+      "cart": "Cart",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "category": "Category",
+        "product": "Product",
+        "shoppingCart": "Shopping Cart",
+        "cartItem": "Cart Item",
+        "customerOrder": "Customer Order",
+        "orderItem": "Order Item",
+        "address": "Address",
+        "review": "Review",
+        "wishlist": "Wishlist"
       },
       "account": {
         "main": "Account",

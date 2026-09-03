@@ -23,6 +23,20 @@
             <span>{{ t$('global.menu.home') }}</span>
           </span>
         </b-nav-item>
+        <b-nav-item
+          :to="{ name: 'ShoppingCart' }"
+          v-if="authenticated && !hasAnyAuthority('ROLE_ADMIN')"
+          data-cy="navbarCart"
+          class="navbar-cart"
+        >
+          <span>
+            <font-awesome-icon icon="cart-shopping" />
+            <span>{{ t$('global.menu.cart') }}</span>
+            <span class="badge rounded-pill bg-danger navbar-cart-badge" v-if="cartStore.totalItemCount > 0">
+              {{ cartStore.totalItemCount }}
+            </span>
+          </span>
+        </b-nav-item>
         <b-nav-item-dropdown
           :no-size="true"
           end
@@ -166,6 +180,12 @@
 .navbar-title {
   display: inline-block;
   color: white;
+}
+
+.navbar-cart-badge {
+  font-size: 0.65rem;
+  vertical-align: text-top;
+  margin-left: 0.2rem;
 }
 
 /* ==========================================================================
