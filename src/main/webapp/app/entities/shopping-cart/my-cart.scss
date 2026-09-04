@@ -215,4 +215,61 @@
     color: var(--cart-blue-dark);
     font-size: 1.25rem;
   }
+
+  .cart-checkout-btn {
+    width: 100%;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+}
+
+// BModal content is teleported to <body>, so these must live outside .cart-page.
+.whatsapp-modal-content {
+  border: none;
+  border-radius: 12px;
+}
+
+.whatsapp-modal-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.whatsapp-modal-title {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.whatsapp-modal-body {
+  color: #64748b;
+}
+
+.whatsapp-modal-text {
+  margin: 0;
+}
+
+.whatsapp-modal-footer {
+  border-top: 1px solid #e2e8f0;
+  gap: 0.5rem;
+}
+
+.whatsapp-modal-cancel {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  font-weight: 500;
+
+  &:hover {
+    background: #eff4ff;
+  }
+}
+
+.whatsapp-modal-confirm {
+  background: #1d4ed8;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+
+  &:hover {
+    background: #1e3a8a;
+    color: #fff;
+  }
 }

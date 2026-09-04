@@ -25,7 +25,12 @@
         "title": "My Cart",
         "continueShopping": "Continue Shopping",
         "empty": "Your cart is empty",
-        "total": "Total"
+        "total": "Total",
+        "checkoutWhatsapp": "Checkout via WhatsApp",
+        "checkoutConfirmTitle": "Confirm your order",
+        "checkoutConfirmMessage": "You'll be redirected to WhatsApp to send your order details directly to the seller.",
+        "checkoutConfirmButton": "Continue to WhatsApp",
+        "checkoutMessageGreeting": "Hi! I'd like to order:"
       }
     }
   }

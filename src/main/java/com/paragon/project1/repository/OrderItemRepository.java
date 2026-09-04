@@ -37,4 +37,11 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     @Query("select orderItem from OrderItem orderItem left join fetch orderItem.product where orderItem.id =:id")
     Optional<OrderItem> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query(
+        "select orderItem from OrderItem orderItem left join fetch orderItem.product left join fetch orderItem.order " +
+            "where orderItem.order.user.login = ?#{authentication.name} " +
+            "order by orderItem.order.placedDate desc, orderItem.id asc"
+    )
+    List<OrderItem> findByOrderUserIsCurrentUser();
 }

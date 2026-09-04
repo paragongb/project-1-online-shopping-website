@@ -10,6 +10,9 @@ import { useCartStore } from '@/store';
 
 import ShoppingCartService from './shopping-cart.service';
 
+// TODO: replace with the seller's real WhatsApp number (digits only, with country code, no + or spaces)
+const SELLER_WHATSAPP_NUMBER = '10000000000';
+
 export default defineComponent({
   name: 'ShoppingCart',
   setup() {
@@ -51,6 +54,24 @@ export default defineComponent({
     };
 
     const clear = () => {};
+
+    const showCheckoutConfirm = ref(false);
+    const openCheckoutConfirm = () => {
+      showCheckoutConfirm.value = true;
+    };
+    const confirmCheckout = () => {
+      const lines = cartStore.items.map(
+        item => `- ${item.product?.name} x${item.quantity} ($${((item.product?.price ?? 0) * (item.quantity ?? 0)).toFixed(2)})`,
+      );
+      const message = [
+        t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutMessageGreeting').toString(),
+        ...lines,
+        `${t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.total')}: $${cartTotal.value.toFixed(2)}`,
+      ].join('\n');
+      const whatsappUrl = `https://wa.me/${+601151811980}?text=${encodeURIComponent(message)}`;
+      showCheckoutConfirm.value = false;
+      window.open(whatsappUrl, '_blank', 'noopener');
+    };
 
     const retrieveShoppingCarts = async () => {
       isFetching.value = true;
@@ -122,6 +143,9 @@ export default defineComponent({
       cartTotal,
       changeQuantity,
       removeCartItem,
+      showCheckoutConfirm,
+      openCheckoutConfirm,
+      confirmCheckout,
       t$,
     };
   },

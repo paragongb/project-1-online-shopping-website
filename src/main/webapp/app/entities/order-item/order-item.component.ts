@@ -1,21 +1,45 @@
 import { type Ref, defineComponent, inject, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import axios from 'axios';
+
+import type AccountService from '@/account/account.service';
 import { useAlertService } from '@/shared/alert/alert.service';
+import { useDateFormat } from '@/shared/composables';
+import { Authority } from '@/shared/jhipster/constants';
 import { type IOrderItem } from '@/shared/model/order-item.model';
 
 import OrderItemService from './order-item.service';
+
+export interface IOrderItemView {
+  id?: number;
+  quantity?: number;
+  priceAtPurchase?: number;
+  product?: { id?: number; name?: string; price?: number; image?: string | null; imageContentType?: string | null };
+}
+
+export interface IOrderSummaryView {
+  id?: number;
+  placedDate?: string;
+  status?: string;
+  totalAmount?: number;
+  items?: IOrderItemView[];
+}
 
 export default defineComponent({
   name: 'OrderItem',
   setup() {
     const { t: t$ } = useI18n();
+    const dateFormat = useDateFormat();
     const orderItemService = inject('orderItemService', () => new OrderItemService());
     const alertService = inject('alertService', () => useAlertService(), true);
+    const accountService = inject<AccountService>('accountService');
 
     const orderItems: Ref<IOrderItem[]> = ref([]);
+    const myOrders: Ref<IOrderSummaryView[]> = ref([]);
 
     const isFetching = ref(false);
+    const isAdmin = ref(false);
 
     const clear = () => {};
 
@@ -31,12 +55,29 @@ export default defineComponent({
       }
     };
 
+    const retrieveMyOrders = async () => {
+      isFetching.value = true;
+      try {
+        const res = await axios.get<IOrderSummaryView[]>('api/orders/my-orders');
+        myOrders.value = res.data;
+      } catch (err) {
+        alertService.showHttpError(err.response);
+      } finally {
+        isFetching.value = false;
+      }
+    };
+
     const handleSyncList = () => {
       retrieveOrderItems();
     };
 
     onMounted(async () => {
-      await retrieveOrderItems();
+      isAdmin.value = (await accountService?.hasAnyAuthorityAndCheckAuth(Authority.ADMIN)) ?? false;
+      if (isAdmin.value) {
+        await retrieveOrderItems();
+      } else {
+        await retrieveMyOrders();
+      }
     });
 
     const removeId: Ref<number> = ref(null);
@@ -63,10 +104,13 @@ export default defineComponent({
 
     return {
       orderItems,
+      myOrders,
       handleSyncList,
       isFetching,
+      isAdmin,
       retrieveOrderItems,
       clear,
+      ...dateFormat,
       removeId,
       removeEntity,
       prepareRemove,

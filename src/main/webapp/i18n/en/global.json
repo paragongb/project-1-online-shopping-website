@@ -17,7 +17,8 @@
         "orderItem": "Order Item",
         "address": "Address",
         "review": "Review",
-        "wishlist": "Wishlist"
+        "wishlist": "Wishlist",
+        "orders": "Orders"
       },
       "account": {
         "main": "Account",

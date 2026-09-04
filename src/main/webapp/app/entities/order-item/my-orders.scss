@@ -1,0 +1,192 @@
+// Minimalistic blue theme for the customer-facing "My Orders" page.
+// Scoped to .orders-page only so the admin order-item table is unaffected.
+.orders-page {
+  --orders-blue: #1d4ed8;
+  --orders-blue-dark: #1e3a8a;
+  --orders-blue-light: #3b82f6;
+  --orders-blue-soft: #eff4ff;
+  --orders-ink: #0f172a;
+  --orders-muted: #64748b;
+  --orders-border: #e2e8f0;
+  --orders-radius: 12px;
+
+  color: var(--orders-ink);
+
+  .orders-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .orders-title {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .orders-loading {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 0;
+    color: var(--orders-blue);
+  }
+
+  .orders-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem;
+    color: var(--orders-muted);
+  }
+
+  .orders-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--orders-blue-light);
+  }
+
+  .orders-btn-primary {
+    margin-top: 1rem;
+    background: var(--orders-blue);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+
+    &:hover {
+      background: var(--orders-blue-dark);
+      color: #fff;
+    }
+  }
+
+  .orders-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .order-card {
+    border: 1px solid var(--orders-border);
+    border-radius: var(--orders-radius);
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .order-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border-bottom: 1px solid var(--orders-border);
+    background: var(--orders-blue-soft);
+  }
+
+  .order-card-id {
+    font-weight: 600;
+    margin-right: 0.75rem;
+  }
+
+  .order-card-date {
+    color: var(--orders-muted);
+    font-size: 0.875rem;
+  }
+
+  .order-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--orders-blue);
+    color: #fff;
+
+    &.order-status-delivered {
+      background: #16a34a;
+    }
+
+    &.order-status-cancelled {
+      background: #64748b;
+    }
+
+    &.order-status-pending {
+      background: #f59e0b;
+    }
+  }
+
+  .order-card-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .order-card-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.1rem;
+
+    & + & {
+      border-top: 1px solid var(--orders-border);
+    }
+  }
+
+  .order-card-item-media {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--orders-blue-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .order-card-item-media-placeholder {
+    color: var(--orders-blue-light);
+    font-size: 1.1rem;
+  }
+
+  .order-card-item-name {
+    flex: 1 1 auto;
+    font-weight: 500;
+    min-width: 0;
+  }
+
+  .order-card-item-qty {
+    color: var(--orders-muted);
+    flex: 0 0 auto;
+  }
+
+  .order-card-item-subtotal {
+    flex: 0 0 auto;
+    width: 80px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--orders-blue-dark);
+  }
+
+  .order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    padding: 0.9rem 1.1rem;
+    border-top: 1px solid var(--orders-border);
+  }
+
+  .order-card-total {
+    color: var(--orders-blue-dark);
+    font-size: 1.1rem;
+  }
+}

@@ -81,6 +81,16 @@
                   <font-awesome-icon icon="times"></font-awesome-icon>
                   <span class="d-none d-md-inline">{{ t$('entity.action.delete') }}</span>
                 </b-button>
+                <b-button
+                  @click="confirmOrder(cartItem)"
+                  :disabled="isConfirmingOrder"
+                  variant="success"
+                  class="btn btn-sm"
+                  data-cy="cartItemConfirmOrderButton"
+                >
+                  <font-awesome-icon icon="check"></font-awesome-icon>
+                  <span class="d-none d-md-inline">{{ t$('project1OnlineShoppingWebsiteApp.cartItem.confirmOrder') }}</span>
+                </b-button>
               </div>
             </td>
           </tr>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isAdmin">
     <h2 id="page-heading" data-cy="OrderItemHeading">
       <span id="order-item">{{ t$('project1OnlineShoppingWebsiteApp.orderItem.home.title') }}</span>
       <div class="d-flex justify-content-end">
@@ -116,6 +116,62 @@
       </template>
     </b-modal>
   </div>
+
+  <div class="orders-page" v-else>
+    <div class="orders-header">
+      <h1 class="orders-title">{{ t$('project1OnlineShoppingWebsiteApp.orderItem.myOrders.title') }}</h1>
+    </div>
+
+    <div class="orders-loading" v-if="isFetching">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div class="orders-empty" v-else-if="myOrders.length === 0">
+      <font-awesome-icon icon="receipt" class="orders-empty-icon"></font-awesome-icon>
+      <p>{{ t$('project1OnlineShoppingWebsiteApp.orderItem.myOrders.empty') }}</p>
+      <router-link :to="{ name: 'Product' }" class="btn orders-btn-primary">
+        {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.continueShopping') }}
+      </router-link>
+    </div>
+
+    <ul class="orders-list" v-else>
+      <li class="order-card" v-for="order in myOrders" :key="order.id" data-cy="myOrderCard">
+        <div class="order-card-header">
+          <div>
+            <span class="order-card-id">{{ t$('project1OnlineShoppingWebsiteApp.orderItem.myOrders.order') }} #{{ order.id }}</span>
+            <span class="order-card-date">{{ formatDateShort(order.placedDate) || '' }}</span>
+          </div>
+          <span class="order-status-badge" :class="'order-status-' + order.status?.toLowerCase()">
+            {{ t$('project1OnlineShoppingWebsiteApp.OrderStatus.' + order.status) }}
+          </span>
+        </div>
+        <ul class="order-card-items">
+          <li class="order-card-item" v-for="item in order.items" :key="item.id">
+            <div class="order-card-item-media">
+              <img
+                v-if="item.product?.image"
+                :src="'data:' + item.product.imageContentType + ';base64,' + item.product.image"
+                :alt="item.product.name"
+              />
+              <div v-else class="order-card-item-media-placeholder">
+                <font-awesome-icon icon="image"></font-awesome-icon>
+              </div>
+            </div>
+            <span class="order-card-item-name">{{ item.product?.name }}</span>
+            <span class="order-card-item-qty">x{{ item.quantity }}</span>
+            <span class="order-card-item-subtotal">{{ '$' + ((item.priceAtPurchase ?? 0) * (item.quantity ?? 0)).toFixed(2) }}</span>
+          </li>
+        </ul>
+        <div class="order-card-footer">
+          <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.total') }}</span>
+          <span class="order-card-total">{{ '$' + (order.totalAmount ?? 0).toFixed(2) }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts" src="./order-item.component.ts"></script>
+<style lang="scss" src="./my-orders.scss"></style>

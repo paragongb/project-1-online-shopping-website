@@ -20,7 +20,9 @@
       "id": "ID",
       "quantity": "Quantity",
       "product": "Product",
-      "cart": "Cart"
+      "cart": "Cart",
+      "confirmOrder": "Confirm Order",
+      "orderConfirmed": "Order confirmed and moved to Order Items"
     }
   }
 }

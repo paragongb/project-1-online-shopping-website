@@ -160,6 +160,12 @@
             <span>{{ t$('global.menu.entities.review') }}</span>
           </span>
         </b-nav-item>
+        <b-nav-item :to="{ name: 'OrderItem' }" v-if="authenticated" data-cy="navbarOrders">
+          <span>
+            <font-awesome-icon icon="receipt" />
+            <span>{{ t$('global.menu.entities.orders') }}</span>
+          </span>
+        </b-nav-item>
         <b-nav-item :to="{ name: 'Wishlist' }" v-if="authenticated" data-cy="navbarWishlist">
           <span>
             <font-awesome-icon icon="heart" />

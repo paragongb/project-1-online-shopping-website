@@ -1,6 +1,8 @@
 import { type Ref, defineComponent, inject, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import axios from 'axios';
+
 import { useAlertService } from '@/shared/alert/alert.service';
 import { type ICartItem } from '@/shared/model/cart-item.model';
 
@@ -16,6 +18,7 @@ export default defineComponent({
     const cartItems: Ref<ICartItem[]> = ref([]);
 
     const isFetching = ref(false);
+    const isConfirmingOrder = ref(false);
 
     const clear = () => {};
 
@@ -33,6 +36,20 @@ export default defineComponent({
 
     const handleSyncList = () => {
       retrieveCartItems();
+    };
+
+    const confirmOrder = async (cartItem: ICartItem) => {
+      isConfirmingOrder.value = true;
+      try {
+        await axios.post(`api/orders/confirm-cart/${cartItem.id}`);
+        const message = t$('project1OnlineShoppingWebsiteApp.cartItem.orderConfirmed').toString();
+        alertService.showInfo(message, { variant: 'success' });
+        cartItems.value = cartItems.value.filter(item => item.cart?.id !== cartItem.cart?.id);
+      } catch (err) {
+        alertService.showHttpError(err.response);
+      } finally {
+        isConfirmingOrder.value = false;
+      }
     };
 
     onMounted(async () => {
@@ -65,6 +82,7 @@ export default defineComponent({
       cartItems,
       handleSyncList,
       isFetching,
+      isConfirmingOrder,
       retrieveCartItems,
       clear,
       removeId,
@@ -72,6 +90,7 @@ export default defineComponent({
       prepareRemove,
       closeDialog,
       removeCartItem,
+      confirmOrder,
       t$,
     };
   },

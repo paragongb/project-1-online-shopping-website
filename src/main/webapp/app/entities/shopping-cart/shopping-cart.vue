@@ -179,8 +179,34 @@
           <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.total') }}</span>
           <span class="cart-summary-total">{{ '$' + cartTotal.toFixed(2) }}</span>
         </div>
+        <button type="button" class="btn cart-btn-primary cart-checkout-btn" data-cy="cartCheckoutButton" @click="openCheckoutConfirm">
+          {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutWhatsapp') }}
+        </button>
       </div>
     </div>
+
+    <b-modal
+      v-model="showCheckoutConfirm"
+      centered
+      content-class="whatsapp-modal-content"
+      header-class="whatsapp-modal-header"
+      body-class="whatsapp-modal-body"
+      footer-class="whatsapp-modal-footer"
+      title-class="whatsapp-modal-title"
+    >
+      <template #title>
+        <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmTitle') }}</span>
+      </template>
+      <p class="whatsapp-modal-text">{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmMessage') }}</p>
+      <template #footer>
+        <button type="button" class="btn whatsapp-modal-cancel" @click="showCheckoutConfirm = false">
+          {{ t$('entity.action.cancel') }}
+        </button>
+        <button type="button" class="btn whatsapp-modal-confirm" data-cy="cartCheckoutConfirmButton" @click="confirmCheckout">
+          {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmButton') }}
+        </button>
+      </template>
+    </b-modal>
   </div>
 </template>
 

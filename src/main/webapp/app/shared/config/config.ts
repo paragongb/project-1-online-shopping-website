@@ -12,6 +12,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons/faBook';
 import { faBoxOpen } from '@fortawesome/free-solid-svg-icons/faBoxOpen';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons/faCartPlus';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons/faCartShopping';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
 import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
 import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase';
@@ -24,6 +25,7 @@ import { faList } from '@fortawesome/free-solid-svg-icons/faList';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons/faPencilAlt';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
+import { faReceipt } from '@fortawesome/free-solid-svg-icons/faReceipt';
 import { faRoad } from '@fortawesome/free-solid-svg-icons/faRoad';
 import { faSave } from '@fortawesome/free-solid-svg-icons/faSave';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
@@ -74,6 +76,7 @@ export function initFortAwesome(vue: App) {
     faBoxOpen,
     faCartPlus,
     faCartShopping,
+    faCheck,
     faCloud,
     faCogs,
     faDatabase,
@@ -86,6 +89,7 @@ export function initFortAwesome(vue: App) {
     faLock,
     faPencilAlt,
     faPlus,
+    faReceipt,
     faRoad,
     faSave,
     faSearch,
