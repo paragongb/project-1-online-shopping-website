@@ -2,6 +2,7 @@ package com.paragon.project1.web.rest;
 
 import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.OrderService;
+import com.paragon.project1.service.dto.OrderItemView;
 import com.paragon.project1.service.dto.OrderSummaryView;
 import java.util.List;
 import org.slf4j.Logger;
@@ -43,5 +44,15 @@ public class OrderResource {
     public ResponseEntity<List<OrderSummaryView>> getMyOrders() {
         LOG.debug("REST request to get the current user's orders");
         return ResponseEntity.ok(orderService.getMyOrders());
+    }
+
+    /**
+     * {@code GET  /api/orders/:orderId/items} : get the items belonging to the given order (admin only).
+     */
+    @GetMapping("/{orderId}/items")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<List<OrderItemView>> getOrderItems(@PathVariable Long orderId) {
+        LOG.debug("REST request to get the items for order {}", orderId);
+        return ResponseEntity.ok(orderService.getOrderItems(orderId));
     }
 }

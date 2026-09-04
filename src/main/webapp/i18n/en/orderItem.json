@@ -25,7 +25,9 @@
       "myOrders": {
         "title": "My Orders",
         "empty": "You have no orders yet",
-        "order": "Order"
+        "order": "Order",
+        "reviewPrompt": "This order has been delivered. Share your feedback:",
+        "writeReview": "Write a Review"
       }
     }
   }

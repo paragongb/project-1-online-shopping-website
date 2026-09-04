@@ -5,10 +5,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { useVuelidate } from '@vuelidate/core';
 
 import ProductService from '@/entities/product/product.service';
-import UserService from '@/entities/user/user.service';
 import { useAlertService } from '@/shared/alert/alert.service';
-import { useDateFormat, useValidation } from '@/shared/composables';
-import useDataUtils from '@/shared/data/data-utils.service';
+import { useValidation } from '@/shared/composables';
+import { useStore } from '@/store';
 import { type IProduct } from '@/shared/model/product.model';
 import { type IReview, Review } from '@/shared/model/review.model';
 
@@ -25,13 +24,15 @@ export default defineComponent({
     const productService = inject('productService', () => new ProductService());
 
     const products: Ref<IProduct[]> = ref([]);
-    const userService = inject('userService', () => new UserService());
-    const users: Ref<Array<any>> = ref([]);
     const isSaving = ref(false);
-    const currentLanguage = inject('currentLanguage', () => computed(() => navigator.language ?? 'en'), true);
+    const isLoading = ref(true);
+    const alreadyReviewed = ref(false);
 
     const route = useRoute();
     const router = useRouter();
+    const store = useStore();
+
+    const isEditing = computed(() => !!route.params?.reviewId);
 
     const previousState = () => router.go(-1);
 
@@ -45,26 +46,38 @@ export default defineComponent({
       }
     };
 
-    if (route.params?.reviewId) {
-      retrieveReview(route.params.reviewId);
-    }
+    const initRelationships = async () => {
+      try {
+        const [productsRes, reviewsRes] = await Promise.all([productService().retrieve(), reviewService().retrieve()]);
+        products.value = productsRes.data;
 
-    const initRelationships = () => {
-      productService()
-        .retrieve()
-        .then(res => {
-          products.value = res.data;
-        });
-      userService()
-        .retrieve()
-        .then(res => {
-          users.value = res.data;
-        });
+        if (isEditing.value) {
+          await retrieveReview(route.params.reviewId);
+        } else {
+          // New reviews are always attributed to the logged-in user, right now.
+          review.value.user = { id: store.account?.id, login: store.account?.login };
+          review.value.reviewDate = new Date();
+
+          const queryProductId = route.query?.productId ? Number(route.query.productId) : null;
+          if (queryProductId) {
+            const preselected = products.value.find(product => product.id === queryProductId);
+            if (preselected) {
+              review.value.product = preselected;
+            }
+            const existingReviews: IReview[] = reviewsRes.data ?? [];
+            alreadyReviewed.value = existingReviews.some(
+              existing => existing.product?.id === queryProductId && existing.user?.id === store.account?.id,
+            );
+          }
+        }
+      } catch (error) {
+        alertService.showHttpError(error.response);
+      } finally {
+        isLoading.value = false;
+      }
     };
 
     initRelationships();
-
-    const dataUtils = useDataUtils();
 
     const { t: t$ } = useI18n();
     const validations = useValidation();
@@ -76,14 +89,14 @@ export default defineComponent({
         max: validations.maxValue(t$('entity.validation.max', { max: 5 }).toString(), 5),
       },
       comment: {},
-      reviewDate: {
-        required: validations.required(t$('entity.validation.required').toString()),
-      },
       product: {},
-      user: {},
     };
     const v$ = useVuelidate(validationRules, review as any);
     v$.value.$validate();
+
+    const setRating = (value: number) => {
+      v$.value.rating.$model = value;
+    };
 
     return {
       reviewService,
@@ -91,16 +104,15 @@ export default defineComponent({
       review,
       previousState,
       isSaving,
-      currentLanguage,
+      isLoading,
+      isEditing,
+      alreadyReviewed,
       products,
-      users,
-      ...dataUtils,
       v$,
-      ...useDateFormat({ entityRef: review }),
+      setRating,
       t$,
     };
   },
-  created(): void {},
   methods: {
     save(): void {
       this.isSaving = true;

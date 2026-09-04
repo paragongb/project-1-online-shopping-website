@@ -128,6 +128,11 @@ public class OrderService {
         return List.copyOf(ordersById.values());
     }
 
+    @Transactional(readOnly = true)
+    public List<OrderItemView> getOrderItems(Long orderId) {
+        return orderItemRepository.findByOrderId(orderId).stream().map(this::toItemView).toList();
+    }
+
     private OrderSummaryView toSummaryView(CustomerOrder order, List<OrderItem> orderItems) {
         OrderSummaryView view = new OrderSummaryView();
         view.setId(order.getId());

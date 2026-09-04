@@ -1,0 +1,95 @@
+// Minimalistic blue theme for the expandable order-items dropdown row
+// on the admin Customer Order table.
+.order-row {
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eff4ff;
+  }
+}
+
+.order-row-chevron {
+  color: #64748b;
+  transition: transform 0.15s ease-in-out;
+}
+
+.order-row-chevron-open {
+  transform: rotate(180deg);
+  color: #1d4ed8;
+}
+
+.order-items-row td {
+  padding: 0;
+  border-top: none;
+}
+
+.order-items-dropdown {
+  background: #eff4ff;
+  padding: 0.75rem 1.5rem;
+}
+
+.order-items-loading,
+.order-items-empty {
+  color: #64748b;
+  padding: 0.5rem 0;
+}
+
+.order-items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.order-items-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+
+  & + & {
+    border-top: 1px solid #e2e8f0;
+  }
+}
+
+.order-items-item-media {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.order-items-item-media-placeholder {
+  color: #3b82f6;
+  font-size: 1rem;
+}
+
+.order-items-item-name {
+  flex: 1 1 auto;
+  font-weight: 500;
+  color: #0f172a;
+  min-width: 0;
+}
+
+.order-items-item-qty {
+  color: #64748b;
+  flex: 0 0 auto;
+}
+
+.order-items-item-price {
+  flex: 0 0 auto;
+  width: 70px;
+  text-align: right;
+  font-weight: 600;
+  color: #1e3a8a;
+}

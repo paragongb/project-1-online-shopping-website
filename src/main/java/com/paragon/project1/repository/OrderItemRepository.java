@@ -44,4 +44,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             "order by orderItem.order.placedDate desc, orderItem.id asc"
     )
     List<OrderItem> findByOrderUserIsCurrentUser();
+
+    @Query(
+        "select orderItem from OrderItem orderItem left join fetch orderItem.product where orderItem.order.id = :orderId order by orderItem.id asc"
+    )
+    List<OrderItem> findByOrderId(@Param("orderId") Long orderId);
 }

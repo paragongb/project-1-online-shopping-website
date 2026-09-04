@@ -168,6 +168,18 @@
           <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.total') }}</span>
           <span class="order-card-total">{{ '$' + (order.totalAmount ?? 0).toFixed(2) }}</span>
         </div>
+        <div class="order-card-review-box" v-if="order.status === 'DELIVERED'">
+          <span class="order-card-review-title">{{ t$('project1OnlineShoppingWebsiteApp.orderItem.myOrders.reviewPrompt') }}</span>
+          <ul class="order-card-review-list">
+            <li class="order-card-review-item" v-for="item in order.items" :key="item.id">
+              <span class="order-card-review-item-name">{{ item.product?.name }}</span>
+              <router-link :to="{ name: 'ReviewCreate', query: { productId: item.product?.id } }" class="btn btn-sm order-card-review-btn">
+                <font-awesome-icon icon="star"></font-awesome-icon>
+                {{ t$('project1OnlineShoppingWebsiteApp.orderItem.myOrders.writeReview') }}
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </li>
     </ul>
   </div>

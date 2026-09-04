@@ -1,98 +1,97 @@
 <template>
-  <div class="d-flex justify-content-center">
-    <div class="col-8">
-      <form name="editForm" novalidate @submit.prevent="save()">
-        <h2 id="project1OnlineShoppingWebsiteApp.review.home.createOrEditLabel" data-cy="ReviewCreateUpdateHeading">
-          {{ t$('project1OnlineShoppingWebsiteApp.review.home.createOrEditLabel') }}
-        </h2>
-        <div>
-          <div class="mb-3" v-if="review.id">
-            <label for="id">{{ t$('global.field.id') }}</label>
-            <input type="text" class="form-control" id="id" name="id" v-model="review.id" readonly />
+  <div class="review-form-page">
+    <div class="review-form-card">
+      <div class="review-form-loading" v-if="isLoading">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div class="review-already" v-else-if="alreadyReviewed">
+        <font-awesome-icon icon="star" class="review-already-icon"></font-awesome-icon>
+        <h2>{{ t$('project1OnlineShoppingWebsiteApp.review.alreadyReviewed.title') }}</h2>
+        <p>{{ t$('project1OnlineShoppingWebsiteApp.review.alreadyReviewed.message') }}</p>
+        <button type="button" class="btn review-btn-primary" @click="previousState()">
+          {{ t$('entity.action.back') }}
+        </button>
+      </div>
+
+      <form name="editForm" novalidate @submit.prevent="save()" v-else>
+        <h1 class="review-form-title">
+          {{
+            isEditing
+              ? t$('project1OnlineShoppingWebsiteApp.review.home.createOrEditLabel')
+              : t$('project1OnlineShoppingWebsiteApp.review.writeReview')
+          }}
+        </h1>
+        <p class="review-form-subtitle" v-if="review.product">{{ review.product.name }}</p>
+
+        <div class="mb-4" v-if="!review.product">
+          <label class="form-control-label review-form-label" for="review-product">{{
+            t$('project1OnlineShoppingWebsiteApp.review.product')
+          }}</label>
+          <select class="form-control review-form-input" id="review-product" data-cy="product" name="product" v-model="review.product">
+            <option :value="null"></option>
+            <option
+              :value="review.product && productOption.id === review.product.id ? review.product : productOption"
+              v-for="productOption in products"
+              :key="productOption.id"
+            >
+              {{ productOption.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-control-label review-form-label">{{ t$('project1OnlineShoppingWebsiteApp.review.rating') }}</label>
+          <div class="review-star-picker" data-cy="rating">
+            <button
+              type="button"
+              class="review-star-btn"
+              v-for="star in 5"
+              :key="star"
+              @click="setRating(star)"
+              :aria-label="`${star} star`"
+            >
+              <font-awesome-icon icon="star" :class="{ 'review-star-filled': star <= (v$.rating.$model ?? 0) }"></font-awesome-icon>
+            </button>
           </div>
-          <div class="mb-3">
-            <label class="form-control-label" for="review-rating">{{ t$('project1OnlineShoppingWebsiteApp.review.rating') }}</label>
-            <input
-              type="number"
-              class="form-control"
-              name="rating"
-              id="review-rating"
-              data-cy="rating"
-              :class="{ valid: !v$.rating.$invalid, invalid: v$.rating.$invalid }"
-              v-model.number="v$.rating.$model"
-              required
-            />
-            <div v-if="v$.rating.$anyDirty && v$.rating.$invalid">
-              <small class="form-text text-danger" v-for="error of v$.rating.$errors" :key="error.$uid">{{ error.$message }}</small>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label" for="review-comment">{{ t$('project1OnlineShoppingWebsiteApp.review.comment') }}</label>
-            <textarea
-              class="form-control"
-              name="comment"
-              id="review-comment"
-              data-cy="comment"
-              :class="{ valid: !v$.comment.$invalid, invalid: v$.comment.$invalid }"
-              v-model="v$.comment.$model"
-            ></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label" for="review-reviewDate">{{ t$('project1OnlineShoppingWebsiteApp.review.reviewDate') }}</label>
-            <div class="d-flex">
-              <input
-                id="review-reviewDate"
-                data-cy="reviewDate"
-                type="datetime-local"
-                class="form-control"
-                name="reviewDate"
-                :class="{ valid: !v$.reviewDate.$invalid, invalid: v$.reviewDate.$invalid }"
-                required
-                :value="convertDateTimeFromServer(v$.reviewDate.$model)"
-                @change="updateInstantField('reviewDate', $event)"
-              />
-            </div>
-            <div v-if="v$.reviewDate.$anyDirty && v$.reviewDate.$invalid">
-              <small class="form-text text-danger" v-for="error of v$.reviewDate.$errors" :key="error.$uid">{{ error.$message }}</small>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label" for="review">{{ t$('project1OnlineShoppingWebsiteApp.review.product') }}</label>
-            <select class="form-control" id="review-product" data-cy="product" name="product" v-model="review.product">
-              <option :value="null"></option>
-              <option
-                :value="review.product && productOption.id === review.product.id ? review.product : productOption"
-                v-for="productOption in products"
-                :key="productOption.id"
-              >
-                {{ productOption.name }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label" for="review">{{ t$('project1OnlineShoppingWebsiteApp.review.user') }}</label>
-            <select class="form-control" id="review-user" data-cy="user" name="user" v-model="review.user">
-              <option :value="null"></option>
-              <option
-                :value="review.user && userOption.id === review.user.id ? review.user : userOption"
-                v-for="userOption in users"
-                :key="userOption.id"
-              >
-                {{ userOption.login }}
-              </option>
-            </select>
+          <div v-if="v$.rating.$anyDirty && v$.rating.$invalid">
+            <small class="form-text text-danger" v-for="error of v$.rating.$errors" :key="error.$uid">{{ error.$message }}</small>
           </div>
         </div>
-        <div>
-          <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" @click="previousState()">
-            <font-awesome-icon icon="ban"></font-awesome-icon>&nbsp;<span>{{ t$('entity.action.cancel') }}</span>
+
+        <div class="mb-4">
+          <label class="form-control-label review-form-label" for="review-comment">{{
+            t$('project1OnlineShoppingWebsiteApp.review.comment')
+          }}</label>
+          <textarea
+            class="form-control review-form-input"
+            name="comment"
+            id="review-comment"
+            data-cy="comment"
+            rows="4"
+            :placeholder="t$('project1OnlineShoppingWebsiteApp.review.commentPlaceholder')"
+            v-model="v$.comment.$model"
+          ></textarea>
+        </div>
+
+        <div class="review-form-actions">
+          <button
+            type="button"
+            id="cancel-save"
+            data-cy="entityCreateCancelButton"
+            class="btn review-btn-secondary"
+            @click="previousState()"
+          >
+            {{ t$('entity.action.cancel') }}
           </button>
           <button
             type="submit"
             id="save-entity"
             data-cy="entityCreateSaveButton"
             :disabled="v$.$invalid || isSaving"
-            class="btn btn-primary"
+            class="btn review-btn-primary"
           >
             <font-awesome-icon icon="save"></font-awesome-icon>&nbsp;<span>{{ t$('entity.action.save') }}</span>
           </button>
@@ -101,4 +100,6 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" src="./review-update.component.ts"></script>
+<style lang="scss" src="./review-update.scss"></style>

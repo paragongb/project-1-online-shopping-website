@@ -24,7 +24,9 @@
       "shippingAddress": "Shipping Address",
       "billingAddress": "Billing Address",
       "orderItem": "Order Item",
-      "user": "User"
+      "user": "User",
+      "delivered": "Delivered",
+      "deliveredSuccess": "Order { param } marked as delivered"
     }
   }
 }

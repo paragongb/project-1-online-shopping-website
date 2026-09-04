@@ -189,4 +189,53 @@
     color: var(--orders-blue-dark);
     font-size: 1.1rem;
   }
+
+  .order-card-review-box {
+    padding: 0.9rem 1.1rem;
+    border-top: 1px solid var(--orders-border);
+    background: var(--orders-blue-soft);
+  }
+
+  .order-card-review-title {
+    display: block;
+    font-weight: 500;
+    color: var(--orders-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .order-card-review-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .order-card-review-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+  }
+
+  .order-card-review-item-name {
+    color: var(--orders-muted);
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .order-card-review-btn {
+    flex: 0 0 auto;
+    background: var(--orders-blue);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+
+    &:hover {
+      background: var(--orders-blue-dark);
+      color: #fff;
+    }
+  }
 }

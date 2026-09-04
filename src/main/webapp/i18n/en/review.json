@@ -22,7 +22,13 @@
       "comment": "Comment",
       "reviewDate": "Review Date",
       "product": "Product",
-      "user": "User"
+      "user": "User",
+      "writeReview": "Write a Review",
+      "commentPlaceholder": "Share details about your experience with this product",
+      "alreadyReviewed": {
+        "title": "You've already reviewed this product",
+        "message": "You can only submit one review per product."
+      }
     }
   }
 }

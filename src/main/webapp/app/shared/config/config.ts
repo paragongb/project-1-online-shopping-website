@@ -13,6 +13,7 @@ import { faBoxOpen } from '@fortawesome/free-solid-svg-icons/faBoxOpen';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons/faCartPlus';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons/faCartShopping';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
 import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
 import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase';
@@ -77,6 +78,7 @@ export function initFortAwesome(vue: App) {
     faCartPlus,
     faCartShopping,
     faCheck,
+    faChevronDown,
     faCloud,
     faCogs,
     faDatabase,

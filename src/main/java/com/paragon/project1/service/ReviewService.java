@@ -4,6 +4,7 @@ import com.paragon.project1.domain.Review;
 import com.paragon.project1.repository.ReviewRepository;
 import com.paragon.project1.service.dto.ReviewDTO;
 import com.paragon.project1.service.mapper.ReviewMapper;
+import com.paragon.project1.web.rest.errors.BadRequestAlertException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,13 @@ public class ReviewService {
      */
     public ReviewDTO save(ReviewDTO reviewDTO) {
         LOG.debug("Request to save Review : {}", reviewDTO);
+        if (
+            reviewDTO.getProduct() != null &&
+            reviewDTO.getUser() != null &&
+            reviewRepository.existsByProductIdAndUserId(reviewDTO.getProduct().getId(), reviewDTO.getUser().getId())
+        ) {
+            throw new BadRequestAlertException("You have already reviewed this product", "review", "alreadyreviewed");
+        }
         Review review = reviewMapper.toEntity(reviewDTO);
         review = reviewRepository.save(review);
         return reviewMapper.toDto(review);

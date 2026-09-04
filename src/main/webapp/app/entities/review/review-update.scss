@@ -1,0 +1,137 @@
+// Minimalistic blue theme for the "Write a Review" / edit review form.
+.review-form-page {
+  --review-blue: #1d4ed8;
+  --review-blue-dark: #1e3a8a;
+  --review-blue-light: #3b82f6;
+  --review-blue-soft: #eff4ff;
+  --review-ink: #0f172a;
+  --review-muted: #64748b;
+  --review-border: #e2e8f0;
+  --review-radius: 12px;
+
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  color: var(--review-ink);
+}
+
+.review-form-card {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius);
+  padding: 2rem;
+}
+
+.review-form-loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  color: var(--review-blue);
+}
+
+.review-already {
+  text-align: center;
+  padding: 1rem 0;
+  color: var(--review-muted);
+
+  h2 {
+    color: var(--review-ink);
+    font-weight: 600;
+    margin: 0.75rem 0 0.5rem;
+  }
+}
+
+.review-already-icon {
+  font-size: 2.25rem;
+  color: var(--review-blue-light);
+}
+
+.review-form-title {
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.review-form-subtitle {
+  color: var(--review-muted);
+  margin-bottom: 1.5rem;
+}
+
+.review-form-label {
+  display: block;
+  font-weight: 500;
+  color: var(--review-ink);
+  margin-bottom: 0.4rem;
+}
+
+.review-form-input {
+  border: 1px solid var(--review-border);
+  border-radius: 8px;
+
+  &:focus {
+    border-color: var(--review-blue);
+    box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.15);
+  }
+}
+
+.review-star-picker {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.review-star-btn {
+  background: none;
+  border: none;
+  padding: 0.15rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--review-border);
+
+  svg {
+    color: inherit;
+  }
+}
+
+.review-star-filled {
+  color: #f59e0b;
+}
+
+.review-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.review-btn-primary {
+  background: var(--review-blue);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    background: var(--review-blue-dark);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.review-btn-secondary {
+  background: #fff;
+  color: var(--review-ink);
+  border: 1px solid var(--review-border);
+  border-radius: 999px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+
+  &:hover {
+    background: var(--review-blue-soft);
+  }
+}

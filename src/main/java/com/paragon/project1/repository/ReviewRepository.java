@@ -40,4 +40,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("select review from Review review left join fetch review.product left join fetch review.user where review.id =:id")
     Optional<Review> findOneWithToOneRelationships(@Param("id") Long id);
+
+    boolean existsByProductIdAndUserId(Long productId, Long userId);
 }
