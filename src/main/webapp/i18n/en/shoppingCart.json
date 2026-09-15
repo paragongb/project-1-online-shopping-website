@@ -22,6 +22,10 @@
       "user": "User",
       "cartItem": "Cart Item",
       "myCart": {
+        "decreaseQuantity": "Decrease quantity for {product}",
+        "increaseQuantity": "Increase quantity for {product}",
+        "removeProduct": "Remove {product} from cart",
+        "contactUnavailable": "Checkout contact is temporarily unavailable. Please ask an administrator to check the store configuration.",
         "title": "My Cart",
         "continueShopping": "Continue Shopping",
         "empty": "Your cart is empty",
@@ -30,7 +34,19 @@
         "checkoutConfirmTitle": "Confirm your order",
         "checkoutConfirmMessage": "You'll be redirected to WhatsApp to send your order details directly to the seller.",
         "checkoutConfirmButton": "Continue to WhatsApp",
-        "checkoutMessageGreeting": "Hi! I'd like to order:"
+        "checkoutMessageGreeting": "Hi! I'd like to order:",
+        "deliveryAddress": "Delivery address",
+        "deliveryAddressHint": "Saved securely for your next order and visible only to you and the store administrator.",
+        "addressLine1": "Address line 1",
+        "addressLine2": "Address line 2 (optional)",
+        "postalCode": "Postal code",
+        "city": "City",
+        "state": "State",
+        "country": "Country",
+        "addressRequired": "Please complete all required delivery address fields before checkout.",
+        "addressPrivacy": "Your saved address is private to your account.",
+        "creatingOrder": "Creating order...",
+        "orderCreated": "Your order has been saved. Continue in WhatsApp to contact the seller."
       }
     }
   }

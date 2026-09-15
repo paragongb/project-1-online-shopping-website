@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type MountingOptions, shallowMount } from '@vue/test-utils';
+import { type MountingOptions, flushPromises, shallowMount } from '@vue/test-utils';
 
 import AlertService from '@/shared/alert/alert.service';
 
@@ -21,6 +21,7 @@ describe('Component Tests', () => {
 
   describe('Review Management Component', () => {
     let reviewServiceStub: any;
+    let productServiceStub: any;
     let mountOptions: MountingOptions<ReviewComponentType>['global'];
 
     beforeEach(() => {
@@ -29,6 +30,9 @@ describe('Component Tests', () => {
         delete: vi.fn(),
       };
       reviewServiceStub.retrieve.mockResolvedValue({ headers: {} });
+      productServiceStub = {
+        retrieve: vi.fn().mockResolvedValue({ headers: {}, data: [] }),
+      };
 
       alertService = new AlertService({
         i18n: { t: vi.fn() } as any,
@@ -54,6 +58,10 @@ describe('Component Tests', () => {
         provide: {
           alertService,
           reviewService: () => reviewServiceStub,
+          productService: () => productServiceStub,
+          accountService: {
+            hasAnyAuthorityAndCheckAuth: vi.fn().mockResolvedValue(true),
+          },
         },
       };
     });
@@ -66,7 +74,7 @@ describe('Component Tests', () => {
         // WHEN
         const wrapper = shallowMount(Review, { global: mountOptions });
         const comp = wrapper.vm;
-        await comp.$nextTick();
+        await flushPromises();
 
         // THEN
         expect(reviewServiceStub.retrieve).toHaveBeenCalledOnce();
@@ -81,7 +89,7 @@ describe('Component Tests', () => {
 
         // THEN
         expect(reviewServiceStub.retrieve.mock.lastCall?.[0]).toMatchObject({
-          sort: ['id,asc'],
+          sort: ['reviewDate,desc', 'id'],
         });
       });
     });
@@ -91,7 +99,7 @@ describe('Component Tests', () => {
       beforeEach(async () => {
         const wrapper = shallowMount(Review, { global: mountOptions });
         comp = wrapper.vm;
-        await comp.$nextTick();
+        await flushPromises();
         reviewServiceStub.retrieve.mockReset();
         reviewServiceStub.retrieve.mockResolvedValue({ headers: {}, data: [] });
       });
@@ -136,7 +144,7 @@ describe('Component Tests', () => {
 
       it('should calculate the sort attribute for a non-id attribute', async () => {
         // WHEN
-        comp.propOrder = 'name';
+        comp.changeOrder('name');
         await comp.$nextTick();
 
         // THEN
@@ -161,6 +169,20 @@ describe('Component Tests', () => {
         // THEN
         await comp.$nextTick(); // handle component clear watch
         expect(reviewServiceStub.retrieve).toHaveBeenCalledTimes(1);
+      });
+
+      it('should combine product and date filters', async () => {
+        comp.selectedProductId = '42';
+        comp.reviewedFrom = '2026-09-01';
+        comp.reviewedTo = '2026-09-15';
+
+        await comp.applyAdminFilters();
+
+        expect(reviewServiceStub.retrieve.mock.lastCall?.[0]).toMatchObject({
+          productId: 42,
+          reviewedFrom: new Date('2026-09-01T00:00:00').toISOString(),
+          reviewedBefore: new Date('2026-09-16T00:00:00').toISOString(),
+        });
       });
     });
   });

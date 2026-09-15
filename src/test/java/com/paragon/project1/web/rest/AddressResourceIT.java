@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.paragon.project1.IntegrationTest;
 import com.paragon.project1.domain.Address;
 import com.paragon.project1.repository.AddressRepository;
+import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.dto.AddressDTO;
 import com.paragon.project1.service.mapper.AddressMapper;
 import jakarta.persistence.EntityManager;
@@ -31,7 +32,7 @@ import tools.jackson.databind.ObjectMapper;
  */
 @IntegrationTest
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(authorities = AuthoritiesConstants.ADMIN)
 class AddressResourceIT {
 
     private static final String DEFAULT_ADDRESS_LINE_1 = "AAAAAAAAAA";

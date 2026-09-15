@@ -29,9 +29,9 @@
           </dt>
           <dd>
             <div v-if="customerOrder.shippingAddress">
-              <router-link :to="{ name: 'AddressView', params: { addressId: customerOrder.shippingAddress.id } }">{{
-                customerOrder.shippingAddress.id
-              }}</router-link>
+              <router-link :to="{ name: 'AddressView', params: { addressId: customerOrder.shippingAddress.id } }">
+                {{ formatAddress(customerOrder.shippingAddress) }}
+              </router-link>
             </div>
           </dd>
           <dt>
@@ -39,9 +39,9 @@
           </dt>
           <dd>
             <div v-if="customerOrder.billingAddress">
-              <router-link :to="{ name: 'AddressView', params: { addressId: customerOrder.billingAddress.id } }">{{
-                customerOrder.billingAddress.id
-              }}</router-link>
+              <router-link :to="{ name: 'AddressView', params: { addressId: customerOrder.billingAddress.id } }">
+                {{ formatAddress(customerOrder.billingAddress) }}
+              </router-link>
             </div>
           </dd>
           <dt>

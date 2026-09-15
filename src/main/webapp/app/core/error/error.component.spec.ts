@@ -12,9 +12,11 @@ import Error from './error.vue';
 type ErrorComponentType = InstanceType<typeof Error>;
 
 let route: Partial<RouteLocation>;
+const routerGoMock = vi.fn();
 
 vi.mock('vue-router', () => ({
   useRoute: () => route,
+  useRouter: () => ({ go: routerGoMock }),
 }));
 
 const customErrorMsg = 'An error occurred.';
@@ -31,6 +33,10 @@ describe('Error component', () => {
     mountOptions = {
       global: {
         plugins: [createTestingPinia()],
+        stubs: {
+          'font-awesome-icon': true,
+          'router-link': true,
+        },
         provide: {
           authenticated,
         },

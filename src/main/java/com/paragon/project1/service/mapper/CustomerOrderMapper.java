@@ -13,15 +13,10 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface CustomerOrderMapper extends EntityMapper<CustomerOrderDTO, CustomerOrder> {
-    @Mapping(target = "shippingAddress", source = "shippingAddress", qualifiedByName = "addressId")
-    @Mapping(target = "billingAddress", source = "billingAddress", qualifiedByName = "addressId")
+    @Mapping(target = "shippingAddress", source = "shippingAddress")
+    @Mapping(target = "billingAddress", source = "billingAddress")
     @Mapping(target = "user", source = "user", qualifiedByName = "userLogin")
     CustomerOrderDTO toDto(CustomerOrder s);
-
-    @Named("addressId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    AddressDTO toDtoAddressId(Address address);
 
     @Named("userLogin")
     @BeanMapping(ignoreByDefault = true)

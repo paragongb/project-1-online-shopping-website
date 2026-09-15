@@ -1,9 +1,18 @@
 package com.paragon.project1.service;
 
+import com.paragon.project1.domain.Product;
+import com.paragon.project1.domain.User;
 import com.paragon.project1.domain.Wishlist;
+import com.paragon.project1.repository.ProductRepository;
+import com.paragon.project1.repository.UserRepository;
 import com.paragon.project1.repository.WishlistRepository;
+import com.paragon.project1.security.SecurityUtils;
 import com.paragon.project1.service.dto.WishlistDTO;
+import com.paragon.project1.service.dto.WishlistView;
+import com.paragon.project1.service.mapper.ProductMapper;
 import com.paragon.project1.service.mapper.WishlistMapper;
+import com.paragon.project1.web.rest.errors.BadRequestAlertException;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +35,77 @@ public class WishlistService {
 
     private final WishlistMapper wishlistMapper;
 
-    public WishlistService(WishlistRepository wishlistRepository, WishlistMapper wishlistMapper) {
+    private final UserRepository userRepository;
+
+    private final ProductRepository productRepository;
+
+    private final ProductMapper productMapper;
+
+    public WishlistService(
+        WishlistRepository wishlistRepository,
+        WishlistMapper wishlistMapper,
+        UserRepository userRepository,
+        ProductRepository productRepository,
+        ProductMapper productMapper
+    ) {
         this.wishlistRepository = wishlistRepository;
         this.wishlistMapper = wishlistMapper;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
+    }
+
+    /** Return the current user's wishlist, creating it on first use. */
+    public WishlistView getCurrentUserWishlist() {
+        return toView(getOrCreateCurrentUserWishlist());
+    }
+
+    /** Add one product to the current user's wishlist. Existing entries are left unchanged. */
+    public WishlistView addProductForCurrentUser(Long productId) {
+        Wishlist wishlist = getOrCreateCurrentUserWishlist();
+        Product product = productRepository
+            .findById(productId)
+            .orElseThrow(() -> new BadRequestAlertException("Product not found", "wishlist", "productnotfound"));
+        wishlist.addProduct(product);
+        wishlistRepository.save(wishlist);
+        return toView(wishlist);
+    }
+
+    /** Remove one product from the current user's wishlist. */
+    public WishlistView removeProductForCurrentUser(Long productId) {
+        Wishlist wishlist = getOrCreateCurrentUserWishlist();
+        Product product = productRepository
+            .findById(productId)
+            .orElseThrow(() -> new BadRequestAlertException("Product not found", "wishlist", "productnotfound"));
+        wishlist.removeProduct(product);
+        wishlistRepository.save(wishlist);
+        return toView(wishlist);
+    }
+
+    private Wishlist getOrCreateCurrentUserWishlist() {
+        User user = getCurrentUser();
+        return wishlistRepository.findByUserId(user.getId()).orElseGet(() -> {
+            Wishlist wishlist = new Wishlist();
+            wishlist.setUser(user);
+            wishlist.setCreatedDate(Instant.now());
+            return wishlistRepository.save(wishlist);
+        });
+    }
+
+    private User getCurrentUser() {
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+            new BadRequestAlertException("User is not authenticated", "wishlist", "usernotfound")
+        );
+        return userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "wishlist", "usernotfound"));
+    }
+
+    private WishlistView toView(Wishlist wishlist) {
+        WishlistView view = new WishlistView();
+        view.setId(wishlist.getId());
+        view.setProducts(wishlist.getProducts().stream().map(productMapper::toDto).toList());
+        return view;
     }
 
     /**

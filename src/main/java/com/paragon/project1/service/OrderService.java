@@ -1,16 +1,27 @@
 package com.paragon.project1.service;
 
+import com.paragon.project1.domain.Address;
 import com.paragon.project1.domain.CartItem;
 import com.paragon.project1.domain.CustomerOrder;
 import com.paragon.project1.domain.OrderItem;
+import com.paragon.project1.domain.Product;
 import com.paragon.project1.domain.ShoppingCart;
 import com.paragon.project1.domain.User;
 import com.paragon.project1.domain.enumeration.OrderStatus;
+import com.paragon.project1.domain.enumeration.ProductStatus;
+import com.paragon.project1.repository.AddressRepository;
 import com.paragon.project1.repository.CartItemRepository;
 import com.paragon.project1.repository.CustomerOrderRepository;
 import com.paragon.project1.repository.OrderItemRepository;
+import com.paragon.project1.repository.ProductRepository;
+import com.paragon.project1.repository.ShoppingCartRepository;
+import com.paragon.project1.repository.UserRepository;
+import com.paragon.project1.security.SecurityUtils;
+import com.paragon.project1.service.dto.AddressDTO;
+import com.paragon.project1.service.dto.CheckoutAddressRequest;
 import com.paragon.project1.service.dto.OrderItemView;
 import com.paragon.project1.service.dto.OrderSummaryView;
+import com.paragon.project1.service.mapper.AddressMapper;
 import com.paragon.project1.service.mapper.ProductMapper;
 import com.paragon.project1.web.rest.errors.BadRequestAlertException;
 import java.math.BigDecimal;
@@ -40,18 +51,72 @@ public class OrderService {
 
     private final OrderItemRepository orderItemRepository;
 
+    private final ShoppingCartRepository shoppingCartRepository;
+
+    private final UserRepository userRepository;
+
+    private final AddressRepository addressRepository;
+
+    private final AddressMapper addressMapper;
+
     private final ProductMapper productMapper;
+
+    private final ProductRepository productRepository;
 
     public OrderService(
         CartItemRepository cartItemRepository,
         CustomerOrderRepository customerOrderRepository,
         OrderItemRepository orderItemRepository,
-        ProductMapper productMapper
+        ShoppingCartRepository shoppingCartRepository,
+        UserRepository userRepository,
+        AddressRepository addressRepository,
+        AddressMapper addressMapper,
+        ProductMapper productMapper,
+        ProductRepository productRepository
     ) {
         this.cartItemRepository = cartItemRepository;
         this.customerOrderRepository = customerOrderRepository;
         this.orderItemRepository = orderItemRepository;
+        this.shoppingCartRepository = shoppingCartRepository;
+        this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
+        this.addressMapper = addressMapper;
         this.productMapper = productMapper;
+        this.productRepository = productRepository;
+    }
+
+    /**
+     * Creates an order from the authenticated customer's cart and stores an address
+     * snapshot owned by that customer. The latest snapshot is reused only as a
+     * private prefill for that same customer's next checkout.
+     */
+    public OrderSummaryView checkoutCurrentUser(CheckoutAddressRequest request) {
+        User user = getCurrentUser();
+        ShoppingCart cart = shoppingCartRepository
+            .findByUserId(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Cart is empty", "customerOrder", "cartempty"));
+        List<CartItem> cartItems = cartItemRepository.findByCartIdOrderByIdAsc(cart.getId());
+        if (cartItems.isEmpty()) {
+            throw new BadRequestAlertException("Cart is empty", "customerOrder", "cartempty");
+        }
+
+        Address deliveryAddress = new Address();
+        deliveryAddress.setAddressLine1(request.getAddressLine1().trim());
+        deliveryAddress.setAddressLine2(trimToNull(request.getAddressLine2()));
+        deliveryAddress.setCity(request.getCity().trim());
+        deliveryAddress.setState(request.getState().trim());
+        deliveryAddress.setPostalCode(request.getPostalCode().trim());
+        deliveryAddress.setCountry(request.getCountry().trim());
+        deliveryAddress.setUser(user);
+        deliveryAddress = addressRepository.save(deliveryAddress);
+
+        return createOrderFromCart(cart, cartItems, user, OrderStatus.PENDING, deliveryAddress);
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.Optional<AddressDTO> getMyLatestDeliveryAddress() {
+        User user = getCurrentUser();
+        return addressRepository.findFirstByUserIdOrderByIdDesc(user.getId()).map(addressMapper::toDto);
     }
 
     /**
@@ -76,35 +141,7 @@ public class OrderService {
             throw new BadRequestAlertException("Cart is empty", "cartItem", "cartempty");
         }
 
-        BigDecimal totalAmount = cartItems
-            .stream()
-            .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        CustomerOrder order = new CustomerOrder();
-        order.setPlacedDate(Instant.now());
-        order.setStatus(OrderStatus.PROCESSING);
-        order.setTotalAmount(totalAmount);
-        order.setUser(user);
-        order = customerOrderRepository.save(order);
-
-        CustomerOrder savedOrder = order;
-        List<OrderItem> orderItems = cartItems
-            .stream()
-            .map(cartItem -> {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setQuantity(cartItem.getQuantity());
-                orderItem.setPriceAtPurchase(cartItem.getProduct().getPrice());
-                orderItem.setProduct(cartItem.getProduct());
-                orderItem.setOrder(savedOrder);
-                return orderItemRepository.save(orderItem);
-            })
-            .toList();
-
-        cartItemRepository.deleteAll(cartItems);
-        LOG.debug("Confirmed order {} for user {} from cart {}", savedOrder.getId(), user.getLogin(), cart.getId());
-
-        return toSummaryView(savedOrder, orderItems);
+        return createOrderFromCart(cart, cartItems, user, OrderStatus.PROCESSING, null);
     }
 
     @Transactional(readOnly = true)
@@ -120,6 +157,7 @@ public class OrderService {
                 summary.setPlacedDate(order.getPlacedDate());
                 summary.setStatus(order.getStatus());
                 summary.setTotalAmount(order.getTotalAmount());
+                summary.setShippingAddress(addressMapper.toDto(order.getShippingAddress()));
                 summary.setItems(new java.util.ArrayList<>());
                 return summary;
             });
@@ -139,8 +177,93 @@ public class OrderService {
         view.setPlacedDate(order.getPlacedDate());
         view.setStatus(order.getStatus());
         view.setTotalAmount(order.getTotalAmount());
+        view.setShippingAddress(addressMapper.toDto(order.getShippingAddress()));
         view.setItems(orderItems.stream().map(this::toItemView).toList());
         return view;
+    }
+
+    private OrderSummaryView createOrderFromCart(
+        ShoppingCart cart,
+        List<CartItem> cartItems,
+        User user,
+        OrderStatus status,
+        Address deliveryAddress
+    ) {
+        Map<Long, Product> productsByCartItemId = new LinkedHashMap<>();
+        for (CartItem cartItem : cartItems) {
+            Product product = productRepository
+                .findByIdForUpdate(cartItem.getProduct().getId())
+                .orElseThrow(() -> new BadRequestAlertException("Product not found", "customerOrder", "productnotfound"));
+            reserveInventory(product, cartItem.getQuantity());
+            productsByCartItemId.put(cartItem.getId(), product);
+        }
+
+        BigDecimal totalAmount = cartItems
+            .stream()
+            .map(item -> productsByCartItemId.get(item.getId()).getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        CustomerOrder order = new CustomerOrder();
+        order.setPlacedDate(Instant.now());
+        order.setStatus(status);
+        order.setTotalAmount(totalAmount);
+        order.setUser(user);
+        order.setShippingAddress(deliveryAddress);
+        order = customerOrderRepository.save(order);
+
+        CustomerOrder savedOrder = order;
+        List<OrderItem> orderItems = cartItems
+            .stream()
+            .map(cartItem -> {
+                Product product = productsByCartItemId.get(cartItem.getId());
+                OrderItem orderItem = new OrderItem();
+                orderItem.setQuantity(cartItem.getQuantity());
+                orderItem.setPriceAtPurchase(product.getPrice());
+                orderItem.setProduct(product);
+                orderItem.setOrder(savedOrder);
+                return orderItemRepository.save(orderItem);
+            })
+            .toList();
+
+        cartItemRepository.deleteAll(cartItems);
+        LOG.debug("Created order {} for user {} from cart {}", savedOrder.getId(), user.getLogin(), cart.getId());
+        return toSummaryView(savedOrder, orderItems);
+    }
+
+    private void reserveInventory(Product product, int requestedQuantity) {
+        if (product.getStatus() == ProductStatus.OUT_OF_STOCK) {
+            throw new BadRequestAlertException("A product in this cart is out of stock", "customerOrder", "outofstock");
+        }
+        // PRE_ORDER products do not consume on-hand inventory.
+        if (product.getStatus() == ProductStatus.PRE_ORDER) {
+            return;
+        }
+
+        int availableQuantity = product.getStockQuantity() == null ? 0 : product.getStockQuantity();
+        if (requestedQuantity > availableQuantity) {
+            throw new BadRequestAlertException("There is not enough stock to complete this order", "customerOrder", "insufficientstock");
+        }
+
+        int remainingQuantity = availableQuantity - requestedQuantity;
+        product.setStockQuantity(remainingQuantity);
+        product.setStatus(remainingQuantity == 0 ? ProductStatus.OUT_OF_STOCK : ProductStatus.IN_STOCK);
+        productRepository.save(product);
+    }
+
+    private User getCurrentUser() {
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+            new BadRequestAlertException("User is not authenticated", "customerOrder", "usernotfound")
+        );
+        return userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "customerOrder", "usernotfound"));
+    }
+
+    private String trimToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
     }
 
     private OrderItemView toItemView(OrderItem orderItem) {

@@ -20,6 +20,8 @@ public class OrderSummaryView implements Serializable {
 
     private BigDecimal totalAmount;
 
+    private AddressDTO shippingAddress;
+
     private List<OrderItemView> items;
 
     public Long getId() {
@@ -52,6 +54,14 @@ public class OrderSummaryView implements Serializable {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public AddressDTO getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(AddressDTO shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 
     public List<OrderItemView> getItems() {

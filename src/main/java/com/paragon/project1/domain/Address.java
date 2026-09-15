@@ -48,6 +48,9 @@ public class Address implements Serializable {
     @Column(name = "country", nullable = false)
     private String country;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
     @JsonIgnoreProperties(value = { "shippingAddress", "billingAddress", "orderItems", "user" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "shippingAddress")
     private CustomerOrder shippingOrder;
@@ -147,6 +150,19 @@ public class Address implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Address user(User user) {
+        this.setUser(user);
+        return this;
     }
 
     public CustomerOrder getShippingOrder() {

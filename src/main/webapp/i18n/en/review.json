@@ -28,6 +28,41 @@
       "alreadyReviewed": {
         "title": "You've already reviewed this product",
         "message": "You can only submit one review per product."
+      },
+      "admin": {
+        "eyebrow": "Customer feedback",
+        "subtitle": "Review customer experiences, find product-specific feedback, and maintain the quality of your catalog.",
+        "totalReviews": "Matching reviews",
+        "averageShown": "Average on this page",
+        "fiveStarShown": "Five-star on this page",
+        "productsShown": "Products on this page",
+        "filtersTitle": "Organize reviews",
+        "filtersSubtitle": "Filter by product, date range, or combine both filters.",
+        "activeFilters": "{count} active filters",
+        "productFilter": "Product",
+        "allProducts": "All products",
+        "dateFrom": "From date",
+        "dateTo": "To date",
+        "organizeByDate": "Date order",
+        "newestFirst": "Newest first",
+        "oldestFirst": "Oldest first",
+        "clearFilters": "Clear filters",
+        "applyFilters": "Apply filters",
+        "emptySubtitle": "No reviews match the selected filters.",
+        "unknownProduct": "Unknown product",
+        "unknownUser": "Unknown user",
+        "noComment": "No written comment was provided.",
+        "reviewedBy": "Reviewed by",
+        "deleteTitle": "Remove this review?"
+      },
+      "myReviews": {
+        "eyebrow": "Your feedback",
+        "title": "My reviews",
+        "subtitle": "The products you've shared your experience with.",
+        "emptyTitle": "No reviews yet",
+        "empty": "Once you review a product, it will appear here.",
+        "shopProducts": "Browse products",
+        "noComment": "No written comment was provided."
       }
     }
   }

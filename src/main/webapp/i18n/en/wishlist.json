@@ -20,7 +20,20 @@
       "id": "ID",
       "createdDate": "Created Date",
       "user": "User",
-      "product": "Product"
+      "product": "Product",
+      "myWishlist": {
+        "eyebrow": "Saved for later",
+        "title": "My Wishlist",
+        "subtitle": "A personal collection of products you love.",
+        "itemCount": "{count} saved",
+        "emptyTitle": "Your wishlist is empty",
+        "empty": "Tap the heart on a product to save it here.",
+        "browseProducts": "Browse products",
+        "addToCart": "Add to Cart",
+        "addingToCart": "Adding...",
+        "remove": "Remove",
+        "removed": "{name} was removed from your wishlist"
+      }
     }
   }
 }

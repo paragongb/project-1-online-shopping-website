@@ -4,6 +4,7 @@ import com.paragon.project1.domain.CartItem;
 import com.paragon.project1.domain.Product;
 import com.paragon.project1.domain.ShoppingCart;
 import com.paragon.project1.domain.User;
+import com.paragon.project1.domain.enumeration.ProductStatus;
 import com.paragon.project1.repository.CartItemRepository;
 import com.paragon.project1.repository.ProductRepository;
 import com.paragon.project1.repository.ShoppingCartRepository;
@@ -61,24 +62,27 @@ public class CartService {
     }
 
     public CartView addItem(Long productId, Integer quantity) {
+        if (quantity == null || quantity < 1) {
+            throw new BadRequestAlertException("Quantity must be at least 1", "cartItem", "quantityinvalid");
+        }
         ShoppingCart cart = getOrCreateCartForCurrentUser();
         Product product = productRepository
-            .findById(productId)
+            .findByIdForUpdate(productId)
             .orElseThrow(() -> new BadRequestAlertException("Product not found", "cartItem", "productnotfound"));
 
-        CartItem item = cartItemRepository
-            .findByCartIdAndProductId(cart.getId(), productId)
-            .map(existing -> {
-                existing.setQuantity(existing.getQuantity() + quantity);
-                return existing;
-            })
-            .orElseGet(() -> {
-                CartItem newItem = new CartItem();
-                newItem.setCart(cart);
-                newItem.setProduct(product);
-                newItem.setQuantity(quantity);
-                return newItem;
-            });
+        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId).orElse(null);
+        int requestedQuantity = quantity;
+        if (item != null) {
+            requestedQuantity = item.getQuantity() + quantity;
+        }
+        ensureAvailable(product, requestedQuantity);
+
+        if (item == null) {
+            item = new CartItem();
+            item.setCart(cart);
+            item.setProduct(product);
+        }
+        item.setQuantity(requestedQuantity);
         cartItemRepository.save(item);
         LOG.debug("Added product {} (qty {}) to cart {}", productId, quantity, cart.getId());
         return toView(cart);
@@ -90,6 +94,10 @@ public class CartService {
         if (quantity == null || quantity < 1) {
             cartItemRepository.delete(item);
         } else {
+            Product product = productRepository
+                .findByIdForUpdate(item.getProduct().getId())
+                .orElseThrow(() -> new BadRequestAlertException("Product not found", "cartItem", "productnotfound"));
+            ensureAvailable(product, quantity);
             item.setQuantity(quantity);
             cartItemRepository.save(item);
         }
@@ -111,6 +119,20 @@ public class CartService {
             throw new BadRequestAlertException("Cart item does not belong to the current user", "cartItem", "forbidden");
         }
         return item;
+    }
+
+    private void ensureAvailable(Product product, int requestedQuantity) {
+        if (product.getStatus() == ProductStatus.OUT_OF_STOCK) {
+            throw new BadRequestAlertException("This product is out of stock", "cartItem", "outofstock");
+        }
+        // PRE_ORDER products intentionally accept orders before inventory arrives.
+        if (product.getStatus() == ProductStatus.PRE_ORDER) {
+            return;
+        }
+        int availableQuantity = product.getStockQuantity() == null ? 0 : product.getStockQuantity();
+        if (requestedQuantity > availableQuantity) {
+            throw new BadRequestAlertException("Only " + availableQuantity + " unit(s) are available", "cartItem", "insufficientstock");
+        }
     }
 
     private ShoppingCart getOrCreateCartForCurrentUser() {

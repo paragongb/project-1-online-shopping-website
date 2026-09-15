@@ -29,6 +29,8 @@ public class AddressDTO implements Serializable {
     @NotNull
     private String country;
 
+    private UserDTO user;
+
     public Long getId() {
         return id;
     }
@@ -85,6 +87,14 @@ public class AddressDTO implements Serializable {
         this.country = country;
     }
 
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -117,6 +127,7 @@ public class AddressDTO implements Serializable {
             ", state='" + getState() + "'" +
             ", postalCode='" + getPostalCode() + "'" +
             ", country='" + getCountry() + "'" +
+            ", user=" + getUser() +
             "}";
     }
 }

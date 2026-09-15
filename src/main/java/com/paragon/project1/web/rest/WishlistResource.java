@@ -1,8 +1,10 @@
 package com.paragon.project1.web.rest;
 
 import com.paragon.project1.repository.WishlistRepository;
+import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.WishlistService;
 import com.paragon.project1.service.dto.WishlistDTO;
+import com.paragon.project1.service.dto.WishlistView;
 import com.paragon.project1.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -42,6 +45,27 @@ public class WishlistResource {
         this.wishlistRepository = wishlistRepository;
     }
 
+    /** {@code GET /wishlists/mine} : get the current authenticated user's wishlist. */
+    @GetMapping("/mine")
+    public ResponseEntity<WishlistView> getMyWishlist() {
+        LOG.debug("REST request to get the current user's Wishlist");
+        return ResponseEntity.ok(wishlistService.getCurrentUserWishlist());
+    }
+
+    /** {@code POST /wishlists/mine/products/:productId} : add a product to the current user's wishlist. */
+    @PostMapping("/mine/products/{productId}")
+    public ResponseEntity<WishlistView> addProductToMyWishlist(@PathVariable Long productId) {
+        LOG.debug("REST request to add Product {} to the current user's Wishlist", productId);
+        return ResponseEntity.ok(wishlistService.addProductForCurrentUser(productId));
+    }
+
+    /** {@code DELETE /wishlists/mine/products/:productId} : remove a product from the current user's wishlist. */
+    @DeleteMapping("/mine/products/{productId}")
+    public ResponseEntity<WishlistView> removeProductFromMyWishlist(@PathVariable Long productId) {
+        LOG.debug("REST request to remove Product {} from the current user's Wishlist", productId);
+        return ResponseEntity.ok(wishlistService.removeProductForCurrentUser(productId));
+    }
+
     /**
      * {@code POST  /wishlists} : Create a new wishlist.
      *
@@ -50,6 +74,7 @@ public class WishlistResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<WishlistDTO> createWishlist(@Valid @RequestBody WishlistDTO wishlistDTO) throws URISyntaxException {
         LOG.debug("REST request to save Wishlist : {}", wishlistDTO);
         if (wishlistDTO.getId() != null) {
@@ -72,6 +97,7 @@ public class WishlistResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<WishlistDTO> updateWishlist(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody WishlistDTO wishlistDTO
@@ -106,6 +132,7 @@ public class WishlistResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<WishlistDTO> partialUpdateWishlist(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody WishlistDTO wishlistDTO
@@ -137,6 +164,7 @@ public class WishlistResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Wishlists in body.
      */
     @GetMapping("")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public List<WishlistDTO> getAllWishlists(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all Wishlists");
         if (eagerload) {
@@ -153,6 +181,7 @@ public class WishlistResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the wishlistDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<WishlistDTO> getWishlist(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Wishlist : {}", id);
         Optional<WishlistDTO> wishlistDTO = wishlistService.findOne(id);
@@ -166,6 +195,7 @@ public class WishlistResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<Void> deleteWishlist(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Wishlist : {}", id);
         wishlistService.delete(id);

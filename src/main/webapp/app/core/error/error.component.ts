@@ -1,6 +1,7 @@
 import { type ComputedRef, type Ref, defineComponent, inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 import { useLoginModal } from '@/account/login-modal';
 
@@ -13,6 +14,7 @@ export default defineComponent({
     const error403: Ref<boolean> = ref(false);
     const error404: Ref<boolean> = ref(false);
     const route = useRoute();
+    const router = useRouter();
 
     if (route.meta) {
       errorMessage.value = route.meta.errorMessage ?? null;
@@ -27,6 +29,7 @@ export default defineComponent({
       errorMessage,
       error403,
       error404,
+      previousState: () => router.go(-1),
       t$: useI18n().t,
     };
   },

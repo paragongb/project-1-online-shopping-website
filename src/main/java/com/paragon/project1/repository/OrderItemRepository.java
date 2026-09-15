@@ -1,6 +1,7 @@
 package com.paragon.project1.repository;
 
 import com.paragon.project1.domain.OrderItem;
+import com.paragon.project1.domain.enumeration.OrderStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+    boolean existsByOrderUserIdAndProductIdAndOrderStatus(Long userId, Long productId, OrderStatus orderStatus);
+
     default Optional<OrderItem> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -39,7 +42,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     Optional<OrderItem> findOneWithToOneRelationships(@Param("id") Long id);
 
     @Query(
-        "select orderItem from OrderItem orderItem left join fetch orderItem.product left join fetch orderItem.order " +
+        "select orderItem from OrderItem orderItem left join fetch orderItem.product left join fetch orderItem.order left join fetch orderItem.order.shippingAddress " +
             "where orderItem.order.user.login = ?#{authentication.name} " +
             "order by orderItem.order.placedDate desc, orderItem.id asc"
     )

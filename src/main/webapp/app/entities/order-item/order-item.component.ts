@@ -8,6 +8,7 @@ import { useAlertService } from '@/shared/alert/alert.service';
 import { useDateFormat } from '@/shared/composables';
 import { Authority } from '@/shared/jhipster/constants';
 import { type IOrderItem } from '@/shared/model/order-item.model';
+import { type IAddress } from '@/shared/model/address.model';
 
 import OrderItemService from './order-item.service';
 
@@ -23,6 +24,7 @@ export interface IOrderSummaryView {
   placedDate?: string;
   status?: string;
   totalAmount?: number;
+  shippingAddress?: IAddress | null;
   items?: IOrderItemView[];
 }
 
@@ -42,6 +44,12 @@ export default defineComponent({
     const isAdmin = ref(false);
 
     const clear = () => {};
+    const formatAddress = (address?: IAddress | null) =>
+      address
+        ? [address.addressLine1, address.addressLine2, address.postalCode, address.city, address.state, address.country]
+            .filter(Boolean)
+            .join(', ')
+        : '—';
 
     const retrieveOrderItems = async () => {
       isFetching.value = true;
@@ -116,6 +124,7 @@ export default defineComponent({
       prepareRemove,
       closeDialog,
       removeOrderItem,
+      formatAddress,
       t$,
     };
   },

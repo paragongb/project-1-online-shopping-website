@@ -1,6 +1,7 @@
 package com.paragon.project1.repository;
 
 import com.paragon.project1.domain.Review;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    long countByReviewDateGreaterThanEqual(Instant startDate);
+
+    @Query("select coalesce(avg(review.rating), 0) from Review review")
+    Double averageRating();
+
     @Query("select review from Review review where review.user.login = ?#{authentication.name}")
     List<Review> findByUserIsCurrentUser();
 
@@ -34,6 +40,30 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         countQuery = "select count(review) from Review review"
     )
     Page<Review> findAllWithToOneRelationships(Pageable pageable);
+
+    @Query(
+        value = """
+        select review from Review review
+        left join fetch review.product product
+        left join fetch review.user
+        where (:productId is null or product.id = :productId)
+          and (:reviewedFrom is null or review.reviewDate >= :reviewedFrom)
+          and (:reviewedBefore is null or review.reviewDate < :reviewedBefore)
+        """,
+        countQuery = """
+        select count(review) from Review review
+        left join review.product product
+        where (:productId is null or product.id = :productId)
+          and (:reviewedFrom is null or review.reviewDate >= :reviewedFrom)
+          and (:reviewedBefore is null or review.reviewDate < :reviewedBefore)
+        """
+    )
+    Page<Review> findAllWithFilters(
+        @Param("productId") Long productId,
+        @Param("reviewedFrom") Instant reviewedFrom,
+        @Param("reviewedBefore") Instant reviewedBefore,
+        Pageable pageable
+    );
 
     @Query("select review from Review review left join fetch review.product left join fetch review.user")
     List<Review> findAllWithToOneRelationships();

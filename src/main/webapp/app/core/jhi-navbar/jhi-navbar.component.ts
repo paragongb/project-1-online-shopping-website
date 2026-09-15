@@ -6,16 +6,12 @@ import { storeToRefs } from 'pinia';
 
 import type AccountService from '@/account/account.service';
 import { useLoginModal } from '@/account/login-modal';
-import EntitiesMenu from '@/entities/entities-menu.vue';
 import languages from '@/shared/config/languages';
 import { AUTHENTICATION_TOKEN_KEY } from '@/shared/jhipster/constants';
 import { useCartStore, useStore } from '@/store';
 
 export default defineComponent({
   name: 'JhiNavbar',
-  components: {
-    'entities-menu': EntitiesMenu,
-  },
   setup() {
     const { showLogin } = useLoginModal();
     const accountService = inject<AccountService>('accountService');
@@ -42,8 +38,8 @@ export default defineComponent({
     };
 
     const logout = async () => {
-      localStorage.removeItem(AUTHENTICATION_TOKEN_KEY);
-      sessionStorage.removeItem(AUTHENTICATION_TOKEN_KEY);
+      globalThis.localStorage?.removeItem(AUTHENTICATION_TOKEN_KEY);
+      globalThis.sessionStorage?.removeItem(AUTHENTICATION_TOKEN_KEY);
       store.logout();
       if (router.currentRoute.value.path !== '/') {
         await router.push('/');

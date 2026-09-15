@@ -214,6 +214,22 @@ class ReviewResourceIT {
             .andExpect(jsonPath("$.[*].reviewDate").value(hasItem(DEFAULT_REVIEW_DATE.toString())));
     }
 
+    @Test
+    @Transactional
+    void getAllReviewsFilteredByDate() throws Exception {
+        insertedReview = reviewRepository.saveAndFlush(review);
+
+        restReviewMockMvc
+            .perform(get(ENTITY_API_URL).param("reviewedFrom", "2000-01-01T00:00:00Z"))
+            .andExpect(status().isOk())
+            .andExpect(content().json("[]"));
+
+        restReviewMockMvc
+            .perform(get(ENTITY_API_URL).param("reviewedBefore", "2000-01-01T00:00:00Z"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[*].id").value(hasItem(review.getId().intValue())));
+    }
+
     @SuppressWarnings({ "unchecked" })
     void getAllReviewsWithEagerRelationshipsIsEnabled() throws Exception {
         when(reviewServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));

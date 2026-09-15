@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAlertService } from '@/shared/alert/alert.service';
 import { useDateFormat } from '@/shared/composables';
 import { type ICustomerOrder } from '@/shared/model/customer-order.model';
+import { type IAddress } from '@/shared/model/address.model';
 
 import CustomerOrderService from './customer-order.service';
 
@@ -20,6 +21,12 @@ export default defineComponent({
 
     const previousState = () => router.go(-1);
     const customerOrder: Ref<ICustomerOrder> = ref({});
+    const formatAddress = (address?: IAddress | null) =>
+      address
+        ? [address.addressLine1, address.addressLine2, address.postalCode, address.city, address.state, address.country]
+            .filter(Boolean)
+            .join(', ')
+        : '—';
 
     const retrieveCustomerOrder = async customerOrderId => {
       try {
@@ -39,6 +46,7 @@ export default defineComponent({
       customerOrder,
 
       previousState,
+      formatAddress,
       t$: useI18n().t,
     };
   },

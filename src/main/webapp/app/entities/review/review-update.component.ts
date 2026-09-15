@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useVuelidate } from '@vuelidate/core';
+import axios from 'axios';
 
 import ProductService from '@/entities/product/product.service';
 import { useAlertService } from '@/shared/alert/alert.service';
@@ -48,7 +49,7 @@ export default defineComponent({
 
     const initRelationships = async () => {
       try {
-        const [productsRes, reviewsRes] = await Promise.all([productService().retrieve(), reviewService().retrieve()]);
+        const [productsRes, reviewsRes] = await Promise.all([productService().retrieve(), axios.get<IReview[]>('api/reviews/my-reviews')]);
         products.value = productsRes.data;
 
         if (isEditing.value) {
@@ -89,7 +90,9 @@ export default defineComponent({
         max: validations.maxValue(t$('entity.validation.max', { max: 5 }).toString(), 5),
       },
       comment: {},
-      product: {},
+      product: {
+        required: validations.required(t$('entity.validation.required').toString()),
+      },
     };
     const v$ = useVuelidate(validationRules, review as any);
     v$.value.$validate();

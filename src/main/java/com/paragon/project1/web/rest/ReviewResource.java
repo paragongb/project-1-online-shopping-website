@@ -1,6 +1,7 @@
 package com.paragon.project1.web.rest;
 
 import com.paragon.project1.repository.ReviewRepository;
+import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.ReviewService;
 import com.paragon.project1.service.dto.ReviewDTO;
 import com.paragon.project1.web.rest.errors.BadRequestAlertException;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,8 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -143,19 +147,32 @@ public class ReviewResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Reviews in body.
      */
     @GetMapping("")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<List<ReviewDTO>> getAllReviews(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "productId", required = false) Long productId,
+        @RequestParam(name = "reviewedFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant reviewedFrom,
+        @RequestParam(name = "reviewedBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant reviewedBefore
     ) {
         LOG.debug("REST request to get a page of Reviews");
         Page<ReviewDTO> page;
-        if (eagerload) {
+        if (productId != null || reviewedFrom != null || reviewedBefore != null) {
+            page = reviewService.findAllWithFilters(productId, reviewedFrom, reviewedBefore, pageable);
+        } else if (eagerload) {
             page = reviewService.findAllWithEagerRelationships(pageable);
         } else {
             page = reviewService.findAll(pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /** {@code GET /reviews/my-reviews} : get the current user's reviews. */
+    @GetMapping("/my-reviews")
+    public ResponseEntity<List<ReviewDTO>> getMyReviews() {
+        LOG.debug("REST request to get the current user's Reviews");
+        return ResponseEntity.ok(reviewService.findAllByCurrentUser());
     }
 
     /**

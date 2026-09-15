@@ -13,10 +13,16 @@ public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
 
+    private final Store store = new Store();
+
     // jhipster-needle-application-properties-property
 
     public Liquibase getLiquibase() {
         return liquibase;
+    }
+
+    public Store getStore() {
+        return store;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -31,6 +37,19 @@ public class ApplicationProperties {
 
         public void setAsyncStart(Boolean asyncStart) {
             this.asyncStart = asyncStart;
+        }
+    }
+
+    public static class Store {
+
+        private String whatsappNumber;
+
+        public String getWhatsappNumber() {
+            return whatsappNumber;
+        }
+
+        public void setWhatsappNumber(String whatsappNumber) {
+            this.whatsappNumber = whatsappNumber;
         }
     }
 

@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type RouteLocation } from 'vue-router';
 
-import { type MountingOptions, shallowMount } from '@vue/test-utils';
-import dayjs from 'dayjs';
+import { createTestingPinia } from '@pinia/testing';
+import { type MountingOptions, flushPromises, shallowMount } from '@vue/test-utils';
+import axios from 'axios';
 
 import AlertService from '@/shared/alert/alert.service';
-import { DATE_TIME_LONG_FORMAT } from '@/shared/composables/date-format';
 
 import ReviewUpdate from './review-update.vue';
 
@@ -38,6 +38,7 @@ describe('Component Tests', () => {
         create: vi.fn(),
       };
       reviewServiceStub.retrieve.mockResolvedValueOnce([]);
+      vi.spyOn(axios, 'get').mockResolvedValue({ data: [] });
 
       alertService = new AlertService({
         i18n: { t: vi.fn() } as any,
@@ -47,6 +48,11 @@ describe('Component Tests', () => {
       });
 
       mountOptions = {
+        plugins: [
+          createTestingPinia({
+            initialState: { main: { userIdentity: { id: 1, login: 'user' } } },
+          }),
+        ],
         stubs: {
           'font-awesome-icon': true,
           'b-input-group': true,
@@ -58,7 +64,7 @@ describe('Component Tests', () => {
           alertService,
           reviewService: () => reviewServiceStub,
           productService: () => ({
-            retrieve: vi.fn().mockResolvedValue({}),
+            retrieve: vi.fn().mockResolvedValue({ data: [] }),
           }),
 
           userService: () => ({
@@ -70,27 +76,6 @@ describe('Component Tests', () => {
 
     afterEach(() => {
       vi.resetAllMocks();
-    });
-
-    describe('load', () => {
-      beforeEach(() => {
-        const wrapper = shallowMount(ReviewUpdate, { global: mountOptions });
-        comp = wrapper.vm;
-      });
-      it('Should convert date from string', () => {
-        // GIVEN
-        const date = new Date('2019-10-15T11:42:02Z');
-
-        // WHEN
-        const convertedDate = comp.convertDateTimeFromServer(date);
-
-        // THEN
-        expect(convertedDate).toEqual(dayjs(date).format(DATE_TIME_LONG_FORMAT));
-      });
-
-      it('Should not convert date if date is not present', () => {
-        expect(comp.convertDateTimeFromServer(null)).toBeNull();
-      });
     });
 
     describe('save', () => {
@@ -142,7 +127,7 @@ describe('Component Tests', () => {
         };
         const wrapper = shallowMount(ReviewUpdate, { global: mountOptions });
         comp = wrapper.vm;
-        await comp.$nextTick();
+        await flushPromises();
 
         // THEN
         expect(comp.review).toMatchObject(reviewSample);

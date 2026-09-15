@@ -42,6 +42,12 @@
           <dd>
             <span>{{ address.country }}</span>
           </dd>
+          <dt>
+            <span>{{ t$('project1OnlineShoppingWebsiteApp.address.owner') }}</span>
+          </dt>
+          <dd>
+            <span>{{ address.user?.login || '—' }}</span>
+          </dd>
         </dl>
         <button type="submit" @click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
           <font-awesome-icon icon="arrow-left"></font-awesome-icon>&nbsp;<span>{{ t$('entity.action.back') }}</span>

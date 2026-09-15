@@ -6,7 +6,7 @@ import { useAlertService } from '@/shared/alert/alert.service';
 import useDataUtils from '@/shared/data/data-utils.service';
 import { Authority } from '@/shared/jhipster/constants';
 import { type IProduct } from '@/shared/model/product.model';
-import { useCartStore } from '@/store';
+import { useCartStore, useWishlistStore } from '@/store';
 
 import ProductService from './product.service';
 
@@ -19,6 +19,7 @@ export default defineComponent({
     const alertService = inject('alertService', () => useAlertService(), true);
     const accountService = inject<AccountService>('accountService');
     const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
 
     const itemsPerPage = ref(20);
     const queryCount: Ref<number> = ref(null);
@@ -44,6 +45,7 @@ export default defineComponent({
     };
 
     const addingToCartId: Ref<number> = ref(null);
+    const updatingWishlistId: Ref<number> = ref(null);
     const addToCart = async (product: IProduct) => {
       addingToCartId.value = product.id;
       try {
@@ -53,6 +55,26 @@ export default defineComponent({
         alertService.showHttpError(err.response);
       } finally {
         addingToCartId.value = null;
+      }
+    };
+
+    const toggleWishlist = async (product: IProduct) => {
+      updatingWishlistId.value = product.id;
+      const isSaved = wishlistStore.hasProduct(product.id);
+      try {
+        if (isSaved) {
+          await wishlistStore.removeProduct(product.id);
+        } else {
+          await wishlistStore.addProduct(product.id);
+        }
+        const messageKey = isSaved
+          ? 'project1OnlineShoppingWebsiteApp.product.shop.removedFromWishlist'
+          : 'project1OnlineShoppingWebsiteApp.product.shop.addedToWishlist';
+        alertService.showInfo(t$(messageKey, { name: product.name }).toString());
+      } catch (err: any) {
+        alertService.showHttpError(err.response);
+      } finally {
+        updatingWishlistId.value = null;
       }
     };
 
@@ -81,6 +103,15 @@ export default defineComponent({
           return 'secondary';
       }
     };
+
+    const adminProductSummary = computed(() => ({
+      inStock: products.value.filter(product => product.status === 'IN_STOCK').length,
+      needsAttention: products.value.filter(product => product.status === 'OUT_OF_STOCK' || Number(product.stockQuantity ?? 0) <= 5).length,
+      unitsShown: products.value.reduce((total, product) => total + Number(product.stockQuantity ?? 0), 0),
+    }));
+
+    const formatCurrency = (price: number | undefined): string =>
+      new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(Number(price ?? 0));
 
     const sortSelection = computed({
       get: () => `${propOrder.value},${reverse.value ? 'desc' : 'asc'}`,
@@ -112,9 +143,9 @@ export default defineComponent({
           sort: sort(),
         };
         const res = await productService().retrieve(paginationQuery);
-        totalItems.value = Number(res.headers['x-total-count']);
+        totalItems.value = Number(res.headers['x-total-count'] ?? 0);
         queryCount.value = totalItems.value;
-        products.value = res.data;
+        products.value = res.data ?? [];
       } catch (err) {
         alertService.showHttpError(err.response);
       } finally {
@@ -201,6 +232,8 @@ export default defineComponent({
       searchQuery,
       filteredProducts,
       statusVariant,
+      adminProductSummary,
+      formatCurrency,
       sortSelection,
       selectedProduct,
       showProductDetails,
@@ -208,6 +241,9 @@ export default defineComponent({
       closeProductDetails,
       addingToCartId,
       addToCart,
+      wishlistStore,
+      updatingWishlistId,
+      toggleWishlist,
       ...dataUtils,
     };
   },

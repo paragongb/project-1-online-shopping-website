@@ -1,4 +1,4 @@
-import { type Ref, computed, defineComponent, inject, ref } from 'vue';
+import { type Ref, computed, defineComponent, inject, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -102,6 +102,21 @@ export default defineComponent({
     };
     const v$ = useVuelidate(validationRules, product as any);
     v$.value.$validate();
+
+    watch(
+      () => product.value.stockQuantity,
+      stockQuantity => {
+        if (stockQuantity == null) {
+          return;
+        }
+        if (stockQuantity > 0) {
+          product.value.status = ProductStatus.IN_STOCK;
+        } else if (stockQuantity === 0 && product.value.status === ProductStatus.IN_STOCK) {
+          product.value.status = ProductStatus.OUT_OF_STOCK;
+        }
+      },
+      { immediate: true },
+    );
 
     return {
       productService,

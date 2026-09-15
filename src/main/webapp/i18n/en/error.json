@@ -1,6 +1,10 @@
 {
   "error": {
     "title": "Error page!",
+    "forbiddenTitle": "Access restricted",
+    "notFoundTitle": "Page not found",
+    "home": "Return home",
+    "back": "Go back",
     "http": {
       "400": "Bad request.",
       "403": "You are not authorized to access this page.",
@@ -10,6 +14,11 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "alreadyreviewed": "You have already submitted a review for this product."
+    "alreadyreviewed": "You have already submitted a review for this product.",
+    "insufficientstock": "The requested quantity is no longer available.",
+    "outofstock": "This product is currently out of stock.",
+    "quantityinvalid": "Quantity must be at least one.",
+    "productnotdelivered": "You can review this product after its order has been delivered.",
+    "productrequired": "Please select a product to review."
   }
 }

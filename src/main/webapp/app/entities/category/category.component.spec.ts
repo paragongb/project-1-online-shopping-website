@@ -26,6 +26,8 @@ describe('Component Tests', () => {
     beforeEach(() => {
       categoryServiceStub = {
         retrieve: vi.fn(),
+        create: vi.fn(),
+        partialUpdate: vi.fn(),
         delete: vi.fn(),
       };
       categoryServiceStub.retrieve.mockResolvedValue({ headers: {} });
@@ -97,6 +99,28 @@ describe('Component Tests', () => {
         // THEN
         await comp.$nextTick(); // handle component clear watch
         expect(categoryServiceStub.retrieve).toHaveBeenCalledTimes(1);
+      });
+
+      it('Should create a category from the popup without navigation', async () => {
+        categoryServiceStub.create.mockResolvedValue({ id: 456, name: 'Accessories' });
+        comp.newCategoryName = '  Accessories  ';
+
+        await comp.createCategory();
+
+        expect(categoryServiceStub.create).toHaveBeenCalledWith({ name: 'Accessories' });
+        expect(comp.categories).toContainEqual({ id: 456, name: 'Accessories' });
+      });
+
+      it('Should rename a category from the popup without navigation', async () => {
+        comp.categories = [{ id: 123, name: 'Old name', description: 'Kept by the patch request' }];
+        categoryServiceStub.partialUpdate.mockResolvedValue({ id: 123, name: 'New name', description: 'Kept by the server' });
+        comp.openEditCategory(comp.categories[0]);
+        comp.editCategoryName = '  New name  ';
+
+        await comp.updateCategory();
+
+        expect(categoryServiceStub.partialUpdate).toHaveBeenCalledWith({ id: 123, name: 'New name' });
+        expect(comp.categories).toContainEqual({ id: 123, name: 'New name', description: 'Kept by the server' });
       });
     });
   });

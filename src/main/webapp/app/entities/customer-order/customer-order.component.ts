@@ -1,10 +1,11 @@
-import { type Ref, defineComponent, inject, onMounted, ref, watch } from 'vue';
+import { type Ref, computed, defineComponent, inject, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import axios from 'axios';
 
 import { useAlertService } from '@/shared/alert/alert.service';
 import { useDateFormat } from '@/shared/composables';
+import { type IAddress } from '@/shared/model/address.model';
 import { type ICustomerOrder } from '@/shared/model/customer-order.model';
 
 import CustomerOrderService from './customer-order.service';
@@ -40,6 +41,27 @@ export default defineComponent({
     const orderItemsByOrderId = ref<Record<number, IOrderItemRow[]>>({});
     const isMarkingDelivered = ref(false);
 
+    const visibleOrderValue = computed(() => customerOrders.value.reduce((total, order) => total + Number(order.totalAmount ?? 0), 0));
+    const activeOrderCount = computed(
+      () => customerOrders.value.filter(order => ['PENDING', 'PAID', 'PROCESSING'].includes(order.status)).length,
+    );
+
+    const formatCurrency = (value?: number) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value ?? 0));
+    const formatOrderNumber = (id?: number) => (id === undefined ? '—' : `#${id.toString().padStart(5, '0')}`);
+    const formatCustomer = (order: ICustomerOrder) => {
+      const fullName = [order.user?.firstName, order.user?.lastName].filter(Boolean).join(' ');
+      return fullName || order.user?.login || t$('project1OnlineShoppingWebsiteApp.customerOrder.unknownCustomer');
+    };
+    const formatAddress = (address?: IAddress | null) => {
+      if (!address) return '—';
+      return (
+        [address.addressLine1, address.addressLine2, address.postalCode, address.city, address.state, address.country]
+          .filter(Boolean)
+          .join(', ') || `#${address.id}`
+      );
+    };
+
     const clear = () => {
       page.value = 1;
     };
@@ -61,9 +83,9 @@ export default defineComponent({
           sort: sort(),
         };
         const res = await customerOrderService().retrieve(paginationQuery);
-        totalItems.value = Number(res.headers['x-total-count']);
+        totalItems.value = Number(res.headers['x-total-count']) || 0;
         queryCount.value = totalItems.value;
-        customerOrders.value = res.data;
+        customerOrders.value = res.data ?? [];
       } catch (err) {
         alertService.showHttpError(err.response);
       } finally {
@@ -188,6 +210,12 @@ export default defineComponent({
       toggleOrderItems,
       isMarkingDelivered,
       markDelivered,
+      visibleOrderValue,
+      activeOrderCount,
+      formatCurrency,
+      formatOrderNumber,
+      formatCustomer,
+      formatAddress,
       t$,
     };
   },

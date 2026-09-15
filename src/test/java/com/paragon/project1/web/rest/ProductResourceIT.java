@@ -771,6 +771,7 @@ class ProductResourceIT {
 
         // Validate the Product in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        updatedProduct.status(ProductStatus.IN_STOCK);
         assertPersistedProductToMatchAllProperties(updatedProduct);
     }
 
@@ -901,6 +902,7 @@ class ProductResourceIT {
         // Validate the Product in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        partialUpdatedProduct.status(ProductStatus.IN_STOCK);
         assertProductUpdatableFieldsEquals(partialUpdatedProduct, getPersistedProduct(partialUpdatedProduct));
     }
 

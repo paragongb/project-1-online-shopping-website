@@ -1,5 +1,7 @@
 # project1OnlineShoppingWebsite
 
+Operational notes: [Database backup and restore](docs/database-backup.md)
+
 This application was generated using JHipster 9.3.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v9.3.0](https://www.jhipster.tech/documentation-archive/v9.3.0).
 
 ## Project Structure

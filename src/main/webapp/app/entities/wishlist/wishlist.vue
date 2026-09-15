@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isAdmin">
     <h2 id="page-heading" data-cy="WishlistHeading">
       <span id="wishlist">{{ t$('project1OnlineShoppingWebsiteApp.wishlist.home.title') }}</span>
       <div class="d-flex justify-content-end">
@@ -109,6 +109,75 @@
       </template>
     </b-modal>
   </div>
+
+  <div class="wishlist-page" v-else>
+    <div class="wishlist-hero">
+      <div>
+        <span class="wishlist-eyebrow">{{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.eyebrow') }}</span>
+        <h1 class="wishlist-title">{{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.title') }}</h1>
+        <p class="wishlist-subtitle">{{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.subtitle') }}</p>
+      </div>
+      <span class="wishlist-count" v-if="wishlistStore.products.length > 0">
+        {{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.itemCount', { count: wishlistStore.products.length }) }}
+      </span>
+    </div>
+
+    <div class="wishlist-loading" v-if="isFetching">
+      <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+
+    <div class="wishlist-empty" v-else-if="wishlistStore.products.length === 0">
+      <span class="wishlist-empty-icon"><font-awesome-icon icon="heart"></font-awesome-icon></span>
+      <h2>{{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.emptyTitle') }}</h2>
+      <p>{{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.empty') }}</p>
+      <router-link :to="{ name: 'Product' }" class="btn wishlist-btn-primary">
+        {{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.browseProducts') }}
+      </router-link>
+    </div>
+
+    <div class="wishlist-grid" v-else>
+      <article class="wishlist-card" v-for="product in wishlistStore.products" :key="product.id" data-cy="wishlistProductCard">
+        <div class="wishlist-card-media">
+          <img v-if="product.image" :src="'data:' + product.imageContentType + ';base64,' + product.image" :alt="product.name" />
+          <font-awesome-icon v-else icon="image"></font-awesome-icon>
+          <span class="badge wishlist-status" :class="'bg-' + statusVariant(product.status)">
+            {{ t$('project1OnlineShoppingWebsiteApp.ProductStatus.' + product.status) }}
+          </span>
+        </div>
+        <div class="wishlist-card-body">
+          <span class="wishlist-category" v-if="product.category">{{ product.category.name }}</span>
+          <h2 class="wishlist-product-name">{{ product.name }}</h2>
+          <p class="wishlist-description">{{ product.description }}</p>
+          <span class="wishlist-price">{{ '$' + product.price }}</span>
+          <div class="wishlist-actions">
+            <button
+              type="button"
+              class="btn wishlist-btn-primary"
+              :disabled="product.status === 'OUT_OF_STOCK' || addingToCartId === product.id"
+              @click="addToCart(product)"
+            >
+              <font-awesome-icon icon="cart-plus"></font-awesome-icon>
+              {{
+                addingToCartId === product.id
+                  ? t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.addingToCart')
+                  : t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.addToCart')
+              }}
+            </button>
+            <button
+              type="button"
+              class="btn wishlist-btn-remove"
+              :disabled="removingProductId === product.id"
+              @click="removeProduct(product)"
+            >
+              <font-awesome-icon icon="trash"></font-awesome-icon>
+              {{ t$('project1OnlineShoppingWebsiteApp.wishlist.myWishlist.remove') }}
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" src="./wishlist.component.ts"></script>
+<style lang="scss" src="./wishlist.scss"></style>

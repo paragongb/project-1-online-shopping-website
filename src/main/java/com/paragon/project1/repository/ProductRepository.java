@@ -1,6 +1,8 @@
 package com.paragon.project1.repository;
 
 import com.paragon.project1.domain.Product;
+import com.paragon.project1.domain.enumeration.ProductStatus;
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,15 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
+    long countByStatus(ProductStatus status);
+
+    long countByStockQuantityBetween(Integer minimumStock, Integer maximumStock);
+
+    /** Locks inventory while an item is being added or an order is being created. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select product from Product product where product.id = :id")
+    Optional<Product> findByIdForUpdate(@Param("id") Long id);
+
     default Optional<Product> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }

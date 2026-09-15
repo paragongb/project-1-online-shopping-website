@@ -1,6 +1,7 @@
 package com.paragon.project1.service;
 
 import com.paragon.project1.domain.Product;
+import com.paragon.project1.domain.enumeration.ProductStatus;
 import com.paragon.project1.repository.ProductRepository;
 import com.paragon.project1.service.dto.ProductDTO;
 import com.paragon.project1.service.mapper.ProductMapper;
@@ -39,6 +40,7 @@ public class ProductService {
     public ProductDTO save(ProductDTO productDTO) {
         LOG.debug("Request to save Product : {}", productDTO);
         Product product = productMapper.toEntity(productDTO);
+        synchronizeStockStatus(product);
         product = productRepository.save(product);
         return productMapper.toDto(product);
     }
@@ -52,6 +54,7 @@ public class ProductService {
     public ProductDTO update(ProductDTO productDTO) {
         LOG.debug("Request to update Product : {}", productDTO);
         Product product = productMapper.toEntity(productDTO);
+        synchronizeStockStatus(product);
         product = productRepository.save(product);
         return productMapper.toDto(product);
     }
@@ -69,6 +72,7 @@ public class ProductService {
             .findById(productDTO.getId())
             .map(existingProduct -> {
                 productMapper.partialUpdate(existingProduct, productDTO);
+                synchronizeStockStatus(existingProduct);
 
                 return existingProduct;
             })
@@ -105,5 +109,17 @@ public class ProductService {
     public void delete(Long id) {
         LOG.debug("Request to delete Product : {}", id);
         productRepository.deleteById(id);
+    }
+
+    private void synchronizeStockStatus(Product product) {
+        Integer stockQuantity = product.getStockQuantity();
+        if (stockQuantity == null) {
+            return;
+        }
+        if (stockQuantity > 0) {
+            product.setStatus(ProductStatus.IN_STOCK);
+        } else if (stockQuantity == 0 && product.getStatus() == ProductStatus.IN_STOCK) {
+            product.setStatus(ProductStatus.OUT_OF_STOCK);
+        }
     }
 }

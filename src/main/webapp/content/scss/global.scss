@@ -86,6 +86,11 @@ a:hover {
   cursor: pointer;
 }
 
+:focus-visible {
+  outline: 3px solid rgba(23, 105, 170, 0.42);
+  outline-offset: 3px;
+}
+
 .dropdown-item:hover {
   color: $dropdown-link-hover-color;
 }
@@ -166,7 +171,24 @@ Generic styles
 }
 
 .footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.1rem 0.5rem;
+  border-top: 1px solid #dce9f6;
+  color: #647a91;
+  font-size: 0.88rem;
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: #1769aa;
+    font-weight: 700;
+  }
 }
 
 .hand,
@@ -213,6 +235,18 @@ Custom alerts for notification
 @media screen and (min-width: 480px) {
   .alerts .jhi-toast {
     width: 50%;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .jh-card {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 

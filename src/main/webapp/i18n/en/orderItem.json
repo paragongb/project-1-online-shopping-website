@@ -27,7 +27,8 @@
         "empty": "You have no orders yet",
         "order": "Order",
         "reviewPrompt": "This order has been delivered. Share your feedback:",
-        "writeReview": "Write a Review"
+        "writeReview": "Write a Review",
+        "deliveryAddress": "Delivery address"
       }
     }
   }

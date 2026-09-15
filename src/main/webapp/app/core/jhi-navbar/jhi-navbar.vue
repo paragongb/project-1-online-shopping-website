@@ -4,7 +4,10 @@
     toggleable="md"
     variant="dark"
     data-bs-theme="dark"
-    :class="{ 'navbar-user-theme': !hasAnyAuthority('ROLE_ADMIN') }"
+    :class="{
+      'navbar-user-theme': !hasAnyAuthority('ROLE_ADMIN'),
+      'navbar-admin-theme': hasAnyAuthority('ROLE_ADMIN'),
+    }"
   >
     <b-navbar-brand class="logo" to="/">
       <span class="logo-img"></span>
@@ -22,31 +25,37 @@
     </b-navbar-toggle>
 
     <b-collapse is-nav id="header-tabs">
-      <b-navbar-nav class="ms-auto" v-if="hasAnyAuthority('ROLE_ADMIN')">
+      <b-navbar-nav class="ms-auto navbar-admin-nav" v-if="hasAnyAuthority('ROLE_ADMIN')">
         <b-nav-item to="/" exact>
           <span>
             <font-awesome-icon icon="fa-solid fa-home" />
             <span>{{ t$('global.menu.home') }}</span>
           </span>
         </b-nav-item>
-        <b-nav-item-dropdown
-          :no-size="true"
-          end
-          id="entity-menu"
-          v-if="authenticated"
-          active-class="active"
-          class="pointer"
-          data-cy="entity"
-        >
-          <template #button-content>
-            <span class="navbar-dropdown-menu">
-              <font-awesome-icon icon="th-list" />
-              <span class="no-bold">{{ t$('global.menu.entities.main') }}</span>
-            </span>
-          </template>
-          <entities-menu></entities-menu>
-          <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
-        </b-nav-item-dropdown>
+        <b-nav-item :to="{ name: 'Category' }" v-if="authenticated" data-cy="adminCategory">
+          <span>
+            <font-awesome-icon icon="tags" />
+            <span>{{ t$('global.menu.entities.category') }}</span>
+          </span>
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'Product' }" v-if="authenticated" data-cy="adminProduct">
+          <span>
+            <font-awesome-icon icon="shirt" />
+            <span>{{ t$('global.menu.entities.product') }}</span>
+          </span>
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'CustomerOrder' }" v-if="authenticated" data-cy="adminCustomerOrder">
+          <span>
+            <font-awesome-icon icon="receipt" />
+            <span>{{ t$('global.menu.entities.customerOrder') }}</span>
+          </span>
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'Review' }" v-if="authenticated" data-cy="adminReview">
+          <span>
+            <font-awesome-icon icon="star" />
+            <span>{{ t$('global.menu.entities.review') }}</span>
+          </span>
+        </b-nav-item>
         <b-nav-item-dropdown
           right
           id="admin-menu"
@@ -69,6 +78,10 @@
           <b-dropdown-item to="/admin/metrics" active-class="active">
             <font-awesome-icon icon="tachometer-alt" />
             <span>{{ t$('global.menu.admin.metrics') }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'Address' }" active-class="active" data-cy="adminAddress">
+            <font-awesome-icon icon="road" />
+            <span>{{ t$('global.menu.entities.address') }}</span>
           </b-dropdown-item>
           <b-dropdown-item to="/admin/health" active-class="active">
             <font-awesome-icon icon="heart" />
@@ -251,6 +264,25 @@
   margin-left: 0.2rem;
 }
 
+.navbar-admin-nav :deep(.nav-link) {
+  border-radius: 999px;
+  padding: 0.4rem 0.72rem;
+  transition: background-color 0.15s ease;
+}
+
+.navbar-admin-nav :deep(.nav-link:hover),
+.navbar-admin-nav :deep(.nav-link.router-link-active) {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.navbar-admin-nav :deep(.nav-link svg) {
+  margin-right: 0.15rem;
+}
+
+.navbar .navbar-admin-nav :deep(.nav-item) {
+  margin-right: 0.1rem;
+}
+
 /* ==========================================================================
   Logo styles
   ========================================================================== */
@@ -275,10 +307,10 @@
 }
 
 /* ==========================================================================
-  User-facing navbar theme (professional, minimalistic, blue) - admin navbar
-  keeps the default dark theme untouched.
+  Professional, minimalistic blue navbar themes.
   ========================================================================== */
-.navbar-user-theme {
+.navbar-user-theme,
+.navbar-admin-theme {
   background: linear-gradient(90deg, #1e3a8a, #1d4ed8) !important;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
 }

@@ -42,6 +42,21 @@
           </select>
         </div>
 
+        <div class="review-product-card" v-if="review.product">
+          <div class="review-product-media">
+            <img
+              v-if="review.product.image"
+              :src="'data:' + review.product.imageContentType + ';base64,' + review.product.image"
+              :alt="review.product.name"
+            />
+            <font-awesome-icon v-else icon="image"></font-awesome-icon>
+          </div>
+          <div>
+            <span class="review-product-label">{{ t$('project1OnlineShoppingWebsiteApp.review.product') }}</span>
+            <strong>{{ review.product.name }}</strong>
+          </div>
+        </div>
+
         <div class="mb-4">
           <label class="form-control-label review-form-label">{{ t$('project1OnlineShoppingWebsiteApp.review.rating') }}</label>
           <div class="review-star-picker" data-cy="rating">
@@ -52,6 +67,7 @@
               :key="star"
               @click="setRating(star)"
               :aria-label="`${star} star`"
+              :aria-pressed="star <= (v$.rating.$model ?? 0)"
             >
               <font-awesome-icon icon="star" :class="{ 'review-star-filled': star <= (v$.rating.$model ?? 0) }"></font-awesome-icon>
             </button>

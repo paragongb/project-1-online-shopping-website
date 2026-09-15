@@ -4,3 +4,4 @@ export { useStore };
 
 export { useTranslationStore } from '@/shared/config/store/translation-store';
 export { useCartStore } from '@/shared/config/store/cart-store';
+export { useWishlistStore } from '@/shared/config/store/wishlist-store';

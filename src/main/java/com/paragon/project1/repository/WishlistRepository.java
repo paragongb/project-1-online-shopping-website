@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WishlistRepository extends WishlistRepositoryWithBagRelationships, JpaRepository<Wishlist, Long> {
+    Optional<Wishlist> findByUserId(Long userId);
+
     default Optional<Wishlist> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findOneWithToOneRelationships(id));
     }

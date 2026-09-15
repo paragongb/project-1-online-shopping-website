@@ -18,6 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     String USERS_BY_LOGIN_CACHE = "usersByLogin";
 
     String USERS_BY_EMAIL_CACHE = "usersByEmail";
+
+    long countByCreatedDateGreaterThanEqual(Instant startDate);
+
     Optional<User> findOneByActivationKey(String activationKey);
 
     List<User> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime);

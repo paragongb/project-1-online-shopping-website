@@ -1,9 +1,15 @@
 <template>
-  <div>
-    <h2 id="page-heading" data-cy="CustomerOrderHeading">
-      <span id="customer-order">{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.title') }}</span>
-      <div class="d-flex justify-content-end">
-        <button class="btn btn-info me-2" @click="handleSyncList" :disabled="isFetching">
+  <div class="admin-orders-page">
+    <header class="admin-orders-header">
+      <div>
+        <span class="admin-orders-eyebrow">{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.eyebrow') }}</span>
+        <h1 id="page-heading" data-cy="CustomerOrderHeading">
+          {{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.title') }}
+        </h1>
+        <p>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.subtitle') }}</p>
+      </div>
+      <div class="admin-orders-header-actions">
+        <button class="btn admin-orders-button admin-orders-button-secondary" @click="handleSyncList" :disabled="isFetching">
           <font-awesome-icon icon="sync" :spin="isFetching"></font-awesome-icon>
           <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.refreshListLabel') }}</span>
         </button>
@@ -12,178 +18,254 @@
             @click="navigate"
             id="jh-create-entity"
             data-cy="entityCreateButton"
-            class="btn btn-primary jh-create-entity create-customer-order"
+            class="btn admin-orders-button admin-orders-button-primary create-customer-order"
           >
             <font-awesome-icon icon="plus"></font-awesome-icon>
             <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.createLabel') }}</span>
           </button>
         </router-link>
       </div>
-    </h2>
-    <br />
-    <div class="alert alert-warning" v-if="!isFetching && customerOrders?.length === 0">
-      <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.notFound') }}</span>
+    </header>
+
+    <section class="admin-orders-summary" v-if="!isFetching || customerOrders?.length">
+      <article class="admin-orders-summary-card admin-orders-summary-primary">
+        <span class="admin-orders-summary-icon"><font-awesome-icon icon="receipt"></font-awesome-icon></span>
+        <div>
+          <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.totalOrders') }}</span>
+          <strong>{{ totalItems || customerOrders?.length || 0 }}</strong>
+        </div>
+      </article>
+      <article class="admin-orders-summary-card">
+        <span class="admin-orders-summary-icon"><font-awesome-icon icon="tags"></font-awesome-icon></span>
+        <div>
+          <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.visibleValue') }}</span>
+          <strong>{{ formatCurrency(visibleOrderValue) }}</strong>
+        </div>
+      </article>
+      <article class="admin-orders-summary-card">
+        <span class="admin-orders-summary-icon"><font-awesome-icon icon="tasks"></font-awesome-icon></span>
+        <div>
+          <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.activeOnPage') }}</span>
+          <strong>{{ activeOrderCount }}</strong>
+        </div>
+      </article>
+    </section>
+
+    <div class="admin-orders-loading" v-if="isFetching && customerOrders?.length === 0">
+      <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
     </div>
-    <div class="table-responsive" v-if="customerOrders?.length > 0">
-      <table class="table table-striped" aria-describedby="customerOrders">
-        <thead>
-          <tr>
-            <th scope="col" @click="changeOrder('id')">
-              <span>{{ t$('global.field.id') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
-            </th>
-            <th scope="col"></th>
-            <th scope="col" @click="changeOrder('placedDate')">
-              <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.placedDate') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'placedDate'"></jhi-sort-indicator>
-            </th>
-            <th scope="col" @click="changeOrder('status')">
-              <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.status') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'status'"></jhi-sort-indicator>
-            </th>
-            <th scope="col" @click="changeOrder('totalAmount')">
-              <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.totalAmount') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'totalAmount'"></jhi-sort-indicator>
-            </th>
-            <th scope="col" @click="changeOrder('shippingAddress.id')">
-              <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.shippingAddress') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'shippingAddress.id'"></jhi-sort-indicator>
-            </th>
-            <th scope="col" @click="changeOrder('billingAddress.id')">
-              <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.billingAddress') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'billingAddress.id'"></jhi-sort-indicator>
-            </th>
-            <th scope="col" @click="changeOrder('user.login')">
-              <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.user') }}</span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'user.login'"></jhi-sort-indicator>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="customerOrder in customerOrders" :key="customerOrder.id">
-            <tr
-              class="order-row"
-              data-cy="entityTable"
-              role="button"
-              @click="toggleOrderItems(customerOrder)"
-              :aria-expanded="expandedOrderId === customerOrder.id"
-            >
-              <td>
-                <router-link :to="{ name: 'CustomerOrderView', params: { customerOrderId: customerOrder.id } }" @click.stop>{{
-                  customerOrder.id
-                }}</router-link>
-              </td>
-              <td>
-                <font-awesome-icon
-                  icon="chevron-down"
-                  class="order-row-chevron"
-                  :class="{ 'order-row-chevron-open': expandedOrderId === customerOrder.id }"
-                ></font-awesome-icon>
-              </td>
-              <td>{{ formatDateShort(customerOrder.placedDate) || '' }}</td>
-              <td>{{ t$('project1OnlineShoppingWebsiteApp.OrderStatus.' + customerOrder.status) }}</td>
-              <td>{{ customerOrder.totalAmount }}</td>
-              <td>
-                <div v-if="customerOrder.shippingAddress">
-                  <router-link :to="{ name: 'AddressView', params: { addressId: customerOrder.shippingAddress.id } }" @click.stop>{{
-                    customerOrder.shippingAddress.id
-                  }}</router-link>
-                </div>
-              </td>
-              <td>
-                <div v-if="customerOrder.billingAddress">
-                  <router-link :to="{ name: 'AddressView', params: { addressId: customerOrder.billingAddress.id } }" @click.stop>{{
-                    customerOrder.billingAddress.id
-                  }}</router-link>
-                </div>
-              </td>
-              <td>
-                {{ customerOrder.user ? customerOrder.user.login : '' }}
-              </td>
-              <td class="text-end" @click.stop>
-                <div class="btn-group">
-                  <router-link
-                    :to="{ name: 'CustomerOrderView', params: { customerOrderId: customerOrder.id } }"
-                    custom
-                    v-slot="{ navigate }"
-                  >
-                    <button @click="navigate" class="btn btn-info btn-sm details" data-cy="entityDetailsButton">
-                      <font-awesome-icon icon="eye"></font-awesome-icon>
-                      <span class="d-none d-md-inline">{{ t$('entity.action.view') }}</span>
-                    </button>
-                  </router-link>
-                  <router-link
-                    :to="{ name: 'CustomerOrderEdit', params: { customerOrderId: customerOrder.id } }"
-                    custom
-                    v-slot="{ navigate }"
-                  >
-                    <button @click="navigate" class="btn btn-primary btn-sm edit" data-cy="entityEditButton">
-                      <font-awesome-icon icon="pencil-alt"></font-awesome-icon>
-                      <span class="d-none d-md-inline">{{ t$('entity.action.edit') }}</span>
-                    </button>
-                  </router-link>
-                  <b-button @click="prepareRemove(customerOrder)" variant="danger" class="btn btn-sm" data-cy="entityDeleteButton">
-                    <font-awesome-icon icon="times"></font-awesome-icon>
-                    <span class="d-none d-md-inline">{{ t$('entity.action.delete') }}</span>
-                  </b-button>
-                  <b-button
-                    v-if="customerOrder.status !== 'DELIVERED'"
-                    @click="markDelivered(customerOrder)"
-                    :disabled="isMarkingDelivered"
-                    variant="success"
-                    class="btn btn-sm"
-                    data-cy="customerOrderDeliveredButton"
-                  >
-                    <font-awesome-icon icon="truck-fast"></font-awesome-icon>
-                    <span class="d-none d-md-inline">{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.delivered') }}</span>
-                  </b-button>
-                </div>
-              </td>
+
+    <section class="admin-orders-empty" v-else-if="customerOrders?.length === 0">
+      <span><font-awesome-icon icon="box-open"></font-awesome-icon></span>
+      <h2>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.notFound') }}</h2>
+      <p>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.emptySubtitle') }}</p>
+    </section>
+
+    <section class="admin-orders-table-card" v-else>
+      <div class="table-responsive">
+        <table class="table admin-orders-table" aria-describedby="customerOrders">
+          <thead>
+            <tr>
+              <th scope="col" @click="changeOrder('id')">
+                <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.home.order') }}</span>
+                <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" field-name="id"></jhi-sort-indicator>
+              </th>
+              <th scope="col" @click="changeOrder('placedDate')">
+                <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.placedDate') }}</span>
+                <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" field-name="placedDate"></jhi-sort-indicator>
+              </th>
+              <th scope="col" @click="changeOrder('user.login')">
+                <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.user') }}</span>
+                <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" field-name="user.login"></jhi-sort-indicator>
+              </th>
+              <th scope="col" @click="changeOrder('status')">
+                <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.status') }}</span>
+                <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" field-name="status"></jhi-sort-indicator>
+              </th>
+              <th scope="col" @click="changeOrder('totalAmount')">
+                <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.totalAmount') }}</span>
+                <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" field-name="totalAmount"></jhi-sort-indicator>
+              </th>
+              <th scope="col" @click="changeOrder('shippingAddress.id')">
+                <span>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.shippingAddress') }}</span>
+                <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" field-name="shippingAddress.id"></jhi-sort-indicator>
+              </th>
+              <th scope="col" class="admin-orders-actions-heading">{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.actions') }}</th>
             </tr>
-            <tr v-if="expandedOrderId === customerOrder.id" class="order-items-row">
-              <td colspan="9">
-                <div class="order-items-dropdown">
-                  <div class="order-items-loading" v-if="isLoadingItems && !orderItemsByOrderId[customerOrder.id]">
-                    <div class="spinner-border spinner-border-sm" role="status">
-                      <span class="visually-hidden">Loading...</span>
+          </thead>
+          <tbody>
+            <template v-for="customerOrder in customerOrders" :key="customerOrder.id">
+              <tr
+                class="admin-order-row"
+                data-cy="entityTable"
+                role="button"
+                @click="toggleOrderItems(customerOrder)"
+                :aria-expanded="expandedOrderId === customerOrder.id"
+              >
+                <td>
+                  <div class="admin-order-reference">
+                    <button
+                      type="button"
+                      class="admin-order-expand"
+                      @click.stop="toggleOrderItems(customerOrder)"
+                      :aria-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.toggleItems')"
+                    >
+                      <font-awesome-icon
+                        icon="chevron-down"
+                        :class="{ 'admin-order-chevron-open': expandedOrderId === customerOrder.id }"
+                      ></font-awesome-icon>
+                    </button>
+                    <router-link :to="{ name: 'CustomerOrderView', params: { customerOrderId: customerOrder.id } }" @click.stop>
+                      {{ formatOrderNumber(customerOrder.id) }}
+                    </router-link>
+                  </div>
+                </td>
+                <td class="admin-order-date">{{ formatDateShort(customerOrder.placedDate) || '—' }}</td>
+                <td>
+                  <div class="admin-order-customer">
+                    <span class="admin-order-customer-avatar">{{ formatCustomer(customerOrder).charAt(0).toUpperCase() }}</span>
+                    <div>
+                      <strong>{{ formatCustomer(customerOrder) }}</strong>
+                      <small v-if="customerOrder.user?.email">{{ customerOrder.user.email }}</small>
                     </div>
                   </div>
-                  <div
-                    class="order-items-empty"
-                    v-else-if="orderItemsByOrderId[customerOrder.id] && orderItemsByOrderId[customerOrder.id].length === 0"
+                </td>
+                <td>
+                  <span class="admin-order-status" :class="`admin-order-status-${customerOrder.status?.toLowerCase()}`">
+                    {{ t$('project1OnlineShoppingWebsiteApp.OrderStatus.' + customerOrder.status) }}
+                  </span>
+                </td>
+                <td class="admin-order-amount">{{ formatCurrency(customerOrder.totalAmount) }}</td>
+                <td>
+                  <router-link
+                    v-if="customerOrder.shippingAddress"
+                    class="admin-order-address"
+                    :to="{ name: 'AddressView', params: { addressId: customerOrder.shippingAddress.id } }"
+                    :title="formatAddress(customerOrder.shippingAddress)"
+                    @click.stop
                   >
-                    {{ t$('project1OnlineShoppingWebsiteApp.orderItem.home.notFound') }}
+                    {{ formatAddress(customerOrder.shippingAddress) }}
+                  </router-link>
+                  <span v-else>—</span>
+                </td>
+                <td class="admin-order-actions" @click.stop>
+                  <div class="admin-order-action-group">
+                    <router-link
+                      :to="{ name: 'CustomerOrderView', params: { customerOrderId: customerOrder.id } }"
+                      custom
+                      v-slot="{ navigate }"
+                    >
+                      <button
+                        @click="navigate"
+                        class="btn admin-order-action admin-order-action-view details"
+                        :title="t$('entity.action.view')"
+                        data-cy="entityDetailsButton"
+                      >
+                        <font-awesome-icon icon="eye"></font-awesome-icon>
+                        <span class="visually-hidden">{{ t$('entity.action.view') }}</span>
+                      </button>
+                    </router-link>
+                    <router-link
+                      :to="{ name: 'CustomerOrderEdit', params: { customerOrderId: customerOrder.id } }"
+                      custom
+                      v-slot="{ navigate }"
+                    >
+                      <button
+                        @click="navigate"
+                        class="btn admin-order-action admin-order-action-edit edit"
+                        :title="t$('entity.action.edit')"
+                        data-cy="entityEditButton"
+                      >
+                        <font-awesome-icon icon="pencil-alt"></font-awesome-icon>
+                        <span class="visually-hidden">{{ t$('entity.action.edit') }}</span>
+                      </button>
+                    </router-link>
+                    <b-button
+                      v-if="customerOrder.status !== 'DELIVERED'"
+                      @click="markDelivered(customerOrder)"
+                      :disabled="isMarkingDelivered"
+                      class="btn admin-order-action admin-order-action-deliver"
+                      :title="t$('project1OnlineShoppingWebsiteApp.customerOrder.delivered')"
+                      data-cy="customerOrderDeliveredButton"
+                    >
+                      <font-awesome-icon icon="truck-fast"></font-awesome-icon>
+                      <span class="visually-hidden">{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.delivered') }}</span>
+                    </b-button>
+                    <b-button
+                      @click="prepareRemove(customerOrder)"
+                      class="btn admin-order-action admin-order-action-delete"
+                      :title="t$('entity.action.delete')"
+                      data-cy="entityDeleteButton"
+                    >
+                      <font-awesome-icon icon="times"></font-awesome-icon>
+                      <span class="visually-hidden">{{ t$('entity.action.delete') }}</span>
+                    </b-button>
                   </div>
-                  <ul class="order-items-list" v-else-if="orderItemsByOrderId[customerOrder.id]">
-                    <li class="order-items-item" v-for="item in orderItemsByOrderId[customerOrder.id]" :key="item.id">
-                      <div class="order-items-item-media">
-                        <img
-                          v-if="item.product?.image"
-                          :src="'data:' + item.product.imageContentType + ';base64,' + item.product.image"
-                          :alt="item.product.name"
-                        />
-                        <div v-else class="order-items-item-media-placeholder">
-                          <font-awesome-icon icon="image"></font-awesome-icon>
-                        </div>
+                </td>
+              </tr>
+              <tr v-if="expandedOrderId === customerOrder.id" class="admin-order-items-row">
+                <td colspan="7">
+                  <div class="admin-order-items-panel">
+                    <div class="admin-order-items-heading">
+                      <div>
+                        <strong>{{ t$('project1OnlineShoppingWebsiteApp.customerOrder.itemsTitle') }}</strong>
+                        <span>{{ formatOrderNumber(customerOrder.id) }}</span>
                       </div>
-                      <span class="order-items-item-name">{{ item.product?.name }}</span>
-                      <span class="order-items-item-qty">x{{ item.quantity }}</span>
-                      <span class="order-items-item-price">{{ '$' + item.priceAtPurchase }}</span>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+                      <span v-if="orderItemsByOrderId[customerOrder.id]">
+                        {{
+                          t$('project1OnlineShoppingWebsiteApp.customerOrder.itemCount', {
+                            count: orderItemsByOrderId[customerOrder.id].length,
+                          })
+                        }}
+                      </span>
+                    </div>
+                    <div class="admin-order-items-loading" v-if="isLoadingItems && !orderItemsByOrderId[customerOrder.id]">
+                      <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                    <div
+                      class="admin-order-items-empty"
+                      v-else-if="orderItemsByOrderId[customerOrder.id] && orderItemsByOrderId[customerOrder.id].length === 0"
+                    >
+                      {{ t$('project1OnlineShoppingWebsiteApp.orderItem.home.notFound') }}
+                    </div>
+                    <ul class="admin-order-items-list" v-else-if="orderItemsByOrderId[customerOrder.id]">
+                      <li class="admin-order-item" v-for="item in orderItemsByOrderId[customerOrder.id]" :key="item.id">
+                        <div class="admin-order-item-media">
+                          <img
+                            v-if="item.product?.image"
+                            :src="'data:' + item.product.imageContentType + ';base64,' + item.product.image"
+                            :alt="item.product.name"
+                          />
+                          <div v-else class="admin-order-item-placeholder">
+                            <font-awesome-icon icon="image"></font-awesome-icon>
+                          </div>
+                        </div>
+                        <span class="admin-order-item-name">{{ item.product?.name }}</span>
+                        <span class="admin-order-item-quantity">×{{ item.quantity }}</span>
+                        <span class="admin-order-item-price">{{ formatCurrency(item.priceAtPurchase) }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="admin-orders-pagination" v-show="customerOrders?.length > 0">
+      <jhi-item-count :page="page" :total="queryCount" :items-per-page="itemsPerPage"></jhi-item-count>
+      <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
     </div>
+
     <b-modal ref="removeEntity" id="removeEntity">
       <template #title>
-        <span id="project1OnlineShoppingWebsiteApp.customerOrder.delete.question" data-cy="customerOrderDeleteDialogHeading">{{
-          t$('entity.delete.title')
-        }}</span>
+        <span id="project1OnlineShoppingWebsiteApp.customerOrder.delete.question" data-cy="customerOrderDeleteDialogHeading">
+          {{ t$('entity.delete.title') }}
+        </span>
       </template>
       <div class="modal-body">
         <p id="jhi-delete-customerOrder-heading">
@@ -191,11 +273,13 @@
         </p>
       </div>
       <template #footer>
-        <div>
-          <button type="button" class="btn btn-secondary" @click="closeDialog()">{{ t$('entity.action.cancel') }}</button>
+        <div class="admin-orders-modal-actions">
+          <button type="button" class="btn admin-orders-button admin-orders-button-secondary" @click="closeDialog()">
+            {{ t$('entity.action.cancel') }}
+          </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn admin-orders-button admin-orders-button-danger"
             id="jhi-confirm-delete-customerOrder"
             data-cy="entityConfirmDeleteButton"
             @click="removeCustomerOrder"
@@ -205,14 +289,6 @@
         </div>
       </template>
     </b-modal>
-    <div v-show="customerOrders?.length > 0">
-      <div class="d-flex justify-content-center">
-        <jhi-item-count :page="page" :total="queryCount" :items-per-page="itemsPerPage"></jhi-item-count>
-      </div>
-      <div class="d-flex justify-content-center">
-        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
-      </div>
-    </div>
   </div>
 </template>
 

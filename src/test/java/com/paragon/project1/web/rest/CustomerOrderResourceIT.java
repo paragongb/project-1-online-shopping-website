@@ -16,6 +16,7 @@ import com.paragon.project1.domain.User;
 import com.paragon.project1.domain.enumeration.OrderStatus;
 import com.paragon.project1.repository.CustomerOrderRepository;
 import com.paragon.project1.repository.UserRepository;
+import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.CustomerOrderService;
 import com.paragon.project1.service.dto.CustomerOrderDTO;
 import com.paragon.project1.service.mapper.CustomerOrderMapper;
@@ -47,7 +48,7 @@ import tools.jackson.databind.ObjectMapper;
 @IntegrationTest
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(authorities = AuthoritiesConstants.ADMIN)
 class CustomerOrderResourceIT {
 
     private static final Instant DEFAULT_PLACED_DATE = Instant.ofEpochMilli(0L);

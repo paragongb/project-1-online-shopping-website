@@ -147,15 +147,17 @@
               type="button"
               class="cart-qty-btn"
               :disabled="isUpdatingItem"
+              :aria-label="t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.decreaseQuantity', { product: item.product?.name })"
               @click="changeQuantity(item.id, (item.quantity ?? 1) - 1)"
             >
               −
             </button>
-            <span class="cart-qty-value">{{ item.quantity }}</span>
+            <span class="cart-qty-value" aria-live="polite">{{ item.quantity }}</span>
             <button
               type="button"
               class="cart-qty-btn"
-              :disabled="isUpdatingItem"
+              :disabled="isUpdatingItem || !canIncreaseQuantity(item)"
+              :aria-label="t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.increaseQuantity', { product: item.product?.name })"
               @click="changeQuantity(item.id, (item.quantity ?? 0) + 1)"
             >
               +
@@ -166,6 +168,7 @@
             type="button"
             class="cart-line-remove"
             :disabled="isUpdatingItem"
+            :aria-label="t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.removeProduct', { product: item.product?.name })"
             data-cy="cartRemoveItemButton"
             @click="removeCartItem(item.id)"
           >
@@ -179,9 +182,60 @@
           <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.total') }}</span>
           <span class="cart-summary-total">{{ '$' + cartTotal.toFixed(2) }}</span>
         </div>
-        <button type="button" class="btn cart-btn-primary cart-checkout-btn" data-cy="cartCheckoutButton" @click="openCheckoutConfirm">
+        <section class="cart-address" aria-labelledby="delivery-address-heading">
+          <div class="cart-address-heading">
+            <span class="cart-address-icon"><font-awesome-icon icon="location-dot"></font-awesome-icon></span>
+            <div>
+              <h2 id="delivery-address-heading">{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.deliveryAddress') }}</h2>
+              <p>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.deliveryAddressHint') }}</p>
+            </div>
+          </div>
+          <div class="cart-address-fields">
+            <label class="cart-address-field cart-address-field-wide">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.addressLine1') }} *</span>
+              <input v-model.trim="deliveryAddress.addressLine1" type="text" autocomplete="address-line1" data-cy="deliveryAddressLine1" />
+            </label>
+            <label class="cart-address-field cart-address-field-wide">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.addressLine2') }}</span>
+              <input v-model.trim="deliveryAddress.addressLine2" type="text" autocomplete="address-line2" />
+            </label>
+            <label class="cart-address-field">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.postalCode') }} *</span>
+              <input v-model.trim="deliveryAddress.postalCode" type="text" autocomplete="postal-code" />
+            </label>
+            <label class="cart-address-field">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.city') }} *</span>
+              <input v-model.trim="deliveryAddress.city" type="text" autocomplete="address-level2" />
+            </label>
+            <label class="cart-address-field">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.state') }} *</span>
+              <input v-model.trim="deliveryAddress.state" type="text" autocomplete="address-level1" />
+            </label>
+            <label class="cart-address-field">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.country') }} *</span>
+              <input v-model.trim="deliveryAddress.country" type="text" autocomplete="country-name" />
+            </label>
+          </div>
+          <p class="cart-address-error" v-if="addressTouched && !isAddressComplete" role="alert">
+            {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.addressRequired') }}
+          </p>
+          <p class="cart-address-privacy">
+            <font-awesome-icon icon="lock"></font-awesome-icon>
+            {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.addressPrivacy') }}
+          </p>
+        </section>
+        <button
+          type="button"
+          class="btn cart-btn-primary cart-checkout-btn"
+          data-cy="cartCheckoutButton"
+          :disabled="isCheckingOut || !sellerWhatsappNumber"
+          @click="openCheckoutConfirm"
+        >
           {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutWhatsapp') }}
         </button>
+        <p class="cart-address-error" v-if="!sellerWhatsappNumber" role="alert">
+          {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.contactUnavailable') }}
+        </p>
       </div>
     </div>
 
@@ -198,12 +252,26 @@
         <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmTitle') }}</span>
       </template>
       <p class="whatsapp-modal-text">{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmMessage') }}</p>
+      <div class="whatsapp-modal-address">
+        <strong>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.deliveryAddress') }}</strong>
+        <span>{{ formattedAddress }}</span>
+      </div>
       <template #footer>
         <button type="button" class="btn whatsapp-modal-cancel" @click="showCheckoutConfirm = false">
           {{ t$('entity.action.cancel') }}
         </button>
-        <button type="button" class="btn whatsapp-modal-confirm" data-cy="cartCheckoutConfirmButton" @click="confirmCheckout">
-          {{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmButton') }}
+        <button
+          type="button"
+          class="btn whatsapp-modal-confirm"
+          data-cy="cartCheckoutConfirmButton"
+          :disabled="isCheckingOut || !sellerWhatsappNumber"
+          @click="confirmCheckout"
+        >
+          {{
+            isCheckingOut
+              ? t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.creatingOrder')
+              : t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.checkoutConfirmButton')
+          }}
         </button>
       </template>
     </b-modal>

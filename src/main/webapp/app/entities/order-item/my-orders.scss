@@ -185,6 +185,42 @@
     border-top: 1px solid var(--orders-border);
   }
 
+  .order-card-address {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: 0.85rem 1.1rem;
+    border-top: 1px solid var(--orders-border);
+    background: #f8fafc;
+
+    > div {
+      display: grid;
+      gap: 0.15rem;
+    }
+
+    strong {
+      color: var(--orders-ink);
+      font-size: 0.8rem;
+    }
+
+    span:last-child {
+      color: var(--orders-muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+  }
+
+  .order-card-address-icon {
+    display: grid;
+    width: 1.8rem;
+    height: 1.8rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 7px;
+    background: var(--orders-blue-soft);
+    color: var(--orders-blue);
+  }
+
   .order-card-total {
     color: var(--orders-blue-dark);
     font-size: 1.1rem;

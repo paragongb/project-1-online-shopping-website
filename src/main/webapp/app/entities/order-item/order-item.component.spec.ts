@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type MountingOptions, shallowMount } from '@vue/test-utils';
+import { type MountingOptions, flushPromises, shallowMount } from '@vue/test-utils';
 
 import AlertService from '@/shared/alert/alert.service';
 
@@ -50,6 +50,7 @@ describe('Component Tests', () => {
         },
         provide: {
           alertService,
+          accountService: { hasAnyAuthorityAndCheckAuth: vi.fn().mockResolvedValue(true) },
           orderItemService: () => orderItemServiceStub,
         },
       };
@@ -63,7 +64,7 @@ describe('Component Tests', () => {
         // WHEN
         const wrapper = shallowMount(OrderItem, { global: mountOptions });
         const comp = wrapper.vm;
-        await comp.$nextTick();
+        await flushPromises();
 
         // THEN
         expect(orderItemServiceStub.retrieve).toHaveBeenCalledOnce();
@@ -86,6 +87,7 @@ describe('Component Tests', () => {
         orderItemServiceStub.delete.mockResolvedValue({});
 
         // WHEN
+        comp.removeEntity = { show: vi.fn(), hide: vi.fn() };
         comp.prepareRemove({ id: 123 });
 
         comp.removeOrderItem();

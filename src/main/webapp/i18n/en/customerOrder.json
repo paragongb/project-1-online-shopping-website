@@ -3,10 +3,17 @@
     "customerOrder": {
       "home": {
         "title": "Customer Orders",
+        "eyebrow": "Order management",
+        "subtitle": "Review purchases, monitor fulfilment, and keep every customer order moving.",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Customer Order",
         "createOrEditLabel": "Create or edit a Customer Order",
-        "notFound": "No Customer Orders found"
+        "notFound": "No Customer Orders found",
+        "emptySubtitle": "New orders will appear here as customers complete checkout.",
+        "totalOrders": "Total orders",
+        "visibleValue": "Value on this page",
+        "activeOnPage": "Active on this page",
+        "order": "Order"
       },
       "created": "A new Customer Order is created with identifier { param }",
       "updated": "A Customer Order is updated with identifier { param }",
@@ -25,6 +32,11 @@
       "billingAddress": "Billing Address",
       "orderItem": "Order Item",
       "user": "User",
+      "actions": "Actions",
+      "unknownCustomer": "Unknown customer",
+      "toggleItems": "Show or hide order items",
+      "itemsTitle": "Products in this order",
+      "itemCount": "{count} items",
       "delivered": "Delivered",
       "deliveredSuccess": "Order { param } marked as delivered"
     }

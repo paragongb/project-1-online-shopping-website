@@ -3,23 +3,47 @@
     "category": {
       "home": {
         "title": "Categories",
+        "eyebrow": "Catalog organization",
+        "subtitle": "Keep the storefront organized with a simple, focused category list.",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Category",
+        "createLabel": "Add category",
         "createOrEditLabel": "Create or edit a Category",
-        "notFound": "No Categories found"
+        "notFound": "No categories yet",
+        "emptySubtitle": "Add your first category to start organizing products.",
+        "listTitle": "Category list",
+        "count": "{count} categories",
+        "noDescription": "No description"
       },
       "created": "A new Category is created with identifier { param }",
       "updated": "A Category is updated with identifier { param }",
       "deleted": "A Category is deleted with identifier { param }",
       "delete": {
+        "title": "Remove category",
+        "confirmTitle": "Confirm category removal",
         "question": "Are you sure you want to delete Category { id }?"
+      },
+      "create": {
+        "title": "Add category",
+        "nameLabel": "Category name",
+        "namePlaceholder": "Enter a category name",
+        "help": "Use a short, clear name that customers can easily understand.",
+        "required": "Category name is required.",
+        "maxLength": "Category name cannot be longer than 100 characters.",
+        "save": "Add category"
+      },
+      "edit": {
+        "title": "Rename category",
+        "help": "Update the category name. Existing products will remain assigned to it.",
+        "save": "Save changes"
       },
       "detail": {
         "title": "Category"
       },
       "id": "ID",
       "name": "Name",
-      "description": "Description"
+      "description": "Description",
+      "rename": "Rename",
+      "remove": "Remove"
     }
   }
 }

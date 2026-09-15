@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type MountingOptions, shallowMount } from '@vue/test-utils';
+import { type MountingOptions, flushPromises, shallowMount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 
 import AlertService from '@/shared/alert/alert.service';
 
@@ -38,6 +39,7 @@ describe('Component Tests', () => {
       });
 
       mountOptions = {
+        plugins: [createTestingPinia()],
         stubs: {
           bModal: bModalStub as any,
           'font-awesome-icon': true,
@@ -50,6 +52,7 @@ describe('Component Tests', () => {
         },
         provide: {
           alertService,
+          accountService: { hasAnyAuthorityAndCheckAuth: vi.fn().mockResolvedValue(true) },
           shoppingCartService: () => shoppingCartServiceStub,
         },
       };
@@ -63,7 +66,7 @@ describe('Component Tests', () => {
         // WHEN
         const wrapper = shallowMount(ShoppingCart, { global: mountOptions });
         const comp = wrapper.vm;
-        await comp.$nextTick();
+        await flushPromises();
 
         // THEN
         expect(shoppingCartServiceStub.retrieve).toHaveBeenCalledOnce();
@@ -86,6 +89,7 @@ describe('Component Tests', () => {
         shoppingCartServiceStub.delete.mockResolvedValue({});
 
         // WHEN
+        comp.removeEntity = { show: vi.fn(), hide: vi.fn() };
         comp.prepareRemove({ id: 123 });
 
         comp.removeShoppingCart();

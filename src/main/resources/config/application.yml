@@ -228,3 +228,7 @@ jhipster:
 # ===================================================================
 
 # application:
+application:
+  store:
+    # Override this when hosting by setting STORE_WHATSAPP_NUMBER (digits only, including country code).
+    whatsapp-number: ${STORE_WHATSAPP_NUMBER:601151811980}

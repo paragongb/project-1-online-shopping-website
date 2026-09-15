@@ -49,6 +49,9 @@
             <th scope="col">
               <span>{{ t$('project1OnlineShoppingWebsiteApp.address.country') }}</span>
             </th>
+            <th scope="col">
+              <span>{{ t$('project1OnlineShoppingWebsiteApp.address.owner') }}</span>
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -63,6 +66,7 @@
             <td>{{ address.state }}</td>
             <td>{{ address.postalCode }}</td>
             <td>{{ address.country }}</td>
+            <td>{{ address.user?.login || '—' }}</td>
             <td class="text-end">
               <div class="btn-group">
                 <router-link :to="{ name: 'AddressView', params: { addressId: address.id } }" custom v-slot="{ navigate }">

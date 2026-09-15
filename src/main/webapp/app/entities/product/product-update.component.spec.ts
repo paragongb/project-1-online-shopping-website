@@ -138,5 +138,29 @@ describe('Component Tests', () => {
         expect(routerGoMock).toHaveBeenCalledWith(-1);
       });
     });
+
+    describe('automatic stock status', () => {
+      it('should mark a product in stock when quantity becomes positive', async () => {
+        const wrapper = shallowMount(ProductUpdate, { global: mountOptions });
+        comp = wrapper.vm;
+        comp.product.status = 'OUT_OF_STOCK';
+        comp.product.stockQuantity = 4;
+
+        await comp.$nextTick();
+
+        expect(comp.product.status).toBe('IN_STOCK');
+      });
+
+      it('should mark an in-stock product out of stock when quantity reaches zero', async () => {
+        const wrapper = shallowMount(ProductUpdate, { global: mountOptions });
+        comp = wrapper.vm;
+        comp.product.status = 'IN_STOCK';
+        comp.product.stockQuantity = 0;
+
+        await comp.$nextTick();
+
+        expect(comp.product.status).toBe('OUT_OF_STOCK');
+      });
+    });
   });
 });

@@ -1,6 +1,7 @@
 package com.paragon.project1.web.rest;
 
 import com.paragon.project1.repository.ShoppingCartRepository;
+import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.ShoppingCartService;
 import com.paragon.project1.service.dto.ShoppingCartDTO;
 import com.paragon.project1.web.rest.errors.BadRequestAlertException;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,6 +26,7 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/shopping-carts")
+@PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
 public class ShoppingCartResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShoppingCartResource.class);

@@ -24,6 +24,7 @@
       "state": "State",
       "postalCode": "Postal Code",
       "country": "Country",
+      "owner": "Owner",
       "shippingOrder": "Shipping Order",
       "billingOrder": "Billing Order"
     }

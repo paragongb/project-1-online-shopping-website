@@ -2,14 +2,18 @@ package com.paragon.project1.web.rest;
 
 import com.paragon.project1.security.AuthoritiesConstants;
 import com.paragon.project1.service.OrderService;
+import com.paragon.project1.service.dto.AddressDTO;
+import com.paragon.project1.service.dto.CheckoutAddressRequest;
 import com.paragon.project1.service.dto.OrderItemView;
 import com.paragon.project1.service.dto.OrderSummaryView;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for confirming cart orders (admin) and listing the current user's own orders.
@@ -44,6 +48,20 @@ public class OrderResource {
     public ResponseEntity<List<OrderSummaryView>> getMyOrders() {
         LOG.debug("REST request to get the current user's orders");
         return ResponseEntity.ok(orderService.getMyOrders());
+    }
+
+    /** Creates the current customer's order before redirecting them to WhatsApp. */
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderSummaryView> checkout(@Valid @RequestBody CheckoutAddressRequest request) {
+        LOG.debug("REST request to checkout the current user's cart");
+        return ResponseEntity.ok(orderService.checkoutCurrentUser(request));
+    }
+
+    /** Returns only the authenticated customer's most recently used address. */
+    @GetMapping("/my-delivery-address")
+    public ResponseEntity<AddressDTO> getMyDeliveryAddress() {
+        LOG.debug("REST request to get the current user's latest delivery address");
+        return ResponseUtil.wrapOrNotFound(orderService.getMyLatestDeliveryAddress());
     }
 
     /**

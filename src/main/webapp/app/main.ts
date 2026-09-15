@@ -13,9 +13,9 @@ import { setupAxiosInterceptors } from '@/shared/config/axios-interceptor';
 import { initFortAwesome, initI18N } from '@/shared/config/config';
 import { initBootstrapVue } from '@/shared/config/config-bootstrap-vue';
 import JhiItemCount from '@/shared/jhi-item-count.vue';
-import { AUTHENTICATION_TOKEN_KEY } from '@/shared/jhipster/constants';
+import { AUTHENTICATION_TOKEN_KEY, Authority } from '@/shared/jhipster/constants';
 import JhiSortIndicator from '@/shared/sort/jhi-sort-indicator.vue';
-import { useCartStore, useStore, useTranslationStore } from '@/store';
+import { useCartStore, useStore, useTranslationStore, useWishlistStore } from '@/store';
 
 import App from './app.vue';
 import router from './router';
@@ -35,6 +35,7 @@ const app = createApp({
     const { hideLogin, showLogin } = useLoginModal();
     const store = useStore();
     const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
     const accountService = new AccountService(store);
     const i18n = useI18n();
     const translationStore = useTranslationStore();
@@ -71,8 +72,14 @@ const app = createApp({
       async value => {
         if (value) {
           await cartStore.fetchCart();
+          if (!accountService.userAuthorities?.includes(Authority.ADMIN)) {
+            await wishlistStore.fetchWishlist();
+          } else {
+            wishlistStore.reset();
+          }
         } else {
           cartStore.reset();
+          wishlistStore.reset();
         }
       },
       { immediate: true },

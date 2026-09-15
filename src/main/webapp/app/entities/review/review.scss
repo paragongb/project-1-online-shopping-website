@@ -1,0 +1,199 @@
+// Customer-facing review history. The admin review table remains unstyled by these rules.
+.my-reviews-page {
+  --reviews-blue: #1d4ed8;
+  --reviews-blue-dark: #1e3a8a;
+  --reviews-blue-light: #3b82f6;
+  --reviews-blue-soft: #eff4ff;
+  --reviews-ink: #0f172a;
+  --reviews-muted: #64748b;
+  --reviews-border: #e2e8f0;
+  --reviews-radius: 14px;
+
+  color: var(--reviews-ink);
+}
+
+.my-reviews-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--reviews-radius);
+  background: linear-gradient(135deg, var(--reviews-blue-dark), var(--reviews-blue));
+  color: #fff;
+}
+
+.my-reviews-eyebrow {
+  color: #bfdbfe;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.my-reviews-title {
+  margin: 0.3rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.my-reviews-subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.my-reviews-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  background: #fff;
+  color: var(--reviews-blue-dark);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--reviews-blue-soft);
+    color: var(--reviews-blue-dark);
+  }
+}
+
+.my-reviews-loading,
+.my-reviews-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  color: var(--reviews-muted);
+  text-align: center;
+}
+.my-reviews-loading {
+  color: var(--reviews-blue);
+}
+.my-reviews-empty h2 {
+  color: var(--reviews-ink);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.my-reviews-empty-icon {
+  margin-bottom: 0.8rem;
+  color: var(--reviews-blue-light);
+  font-size: 2.5rem;
+}
+
+.my-reviews-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.my-review-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--reviews-border);
+  border-radius: var(--reviews-radius);
+  background: #fff;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+.my-review-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.my-review-product-media {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--reviews-blue-soft);
+  color: var(--reviews-blue-light);
+  font-size: 1.5rem;
+}
+.my-review-product-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.my-review-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.my-review-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.my-review-product-label {
+  color: var(--reviews-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.my-review-product-name {
+  margin: 0.15rem 0 0;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.my-review-date {
+  flex: 0 0 auto;
+  color: var(--reviews-muted);
+  font-size: 0.75rem;
+}
+.my-review-stars {
+  display: flex;
+  gap: 0.15rem;
+  margin: 0.65rem 0;
+  color: var(--reviews-border);
+  font-size: 1rem;
+}
+.my-review-stars .my-review-star-filled {
+  color: #f59e0b;
+}
+.my-review-comment {
+  display: -webkit-box;
+  flex: 1;
+  margin: 0 0 0.9rem;
+  overflow: hidden;
+  color: var(--reviews-muted);
+  font-size: 0.9rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.my-review-edit-link {
+  align-self: flex-start;
+  color: var(--reviews-blue);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.my-review-edit-link:hover {
+  color: var(--reviews-blue-dark);
+}
+
+@media (max-width: 575px) {
+  .my-reviews-header {
+    align-items: start;
+    padding: 1.5rem;
+  }
+  .my-reviews-title {
+    font-size: 1.6rem;
+  }
+}

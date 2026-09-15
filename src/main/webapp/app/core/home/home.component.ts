@@ -1,5 +1,7 @@
-import { type ComputedRef, type Ref, defineComponent, inject, onMounted, ref } from 'vue';
+import { type ComputedRef, type Ref, computed, defineComponent, inject, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+import axios from 'axios';
 
 import type AccountService from '@/account/account.service';
 import { useLoginModal } from '@/account/login-modal';
@@ -10,6 +12,33 @@ import { Authority } from '@/shared/jhipster/constants';
 import { type ICategory } from '@/shared/model/category.model';
 import { type IProduct } from '@/shared/model/product.model';
 import { useCartStore } from '@/store';
+
+interface IDashboardPeriod {
+  orders: number;
+  revenue: number;
+  newUsers: number;
+  reviews: number;
+}
+
+interface IAdminDashboardStats {
+  generatedAt: string;
+  overview: {
+    users: number;
+    products: number;
+    categories: number;
+    orders: number;
+    revenue: number;
+    reviews: number;
+    averageRating: number;
+    cartItems: number;
+    wishlists: number;
+  };
+  today: IDashboardPeriod;
+  week: IDashboardPeriod;
+  month: IDashboardPeriod;
+  catalog: { inStock: number; lowStock: number; outOfStock: number; preOrder: number };
+  orderStatuses: { pending: number; paid: number; processing: number; shipped: number; delivered: number; cancelled: number };
+}
 
 export default defineComponent({
   setup() {
@@ -22,6 +51,8 @@ export default defineComponent({
     const cartStore = useCartStore();
 
     const isAdmin = ref(false);
+    const dashboard: Ref<IAdminDashboardStats> = ref(null);
+    const isLoadingDashboard = ref(false);
     const featuredProducts: Ref<IProduct[]> = ref([]);
     const categories: Ref<ICategory[]> = ref([]);
     const isLoadingHome = ref(false);
@@ -30,9 +61,73 @@ export default defineComponent({
     const productService = new ProductService();
     const categoryService = new CategoryService();
 
+    const retrieveDashboard = async () => {
+      isLoadingDashboard.value = true;
+      try {
+        const response = await axios.get<IAdminDashboardStats>('api/admin/dashboard');
+        dashboard.value = response.data;
+      } catch (err: any) {
+        alertService.showHttpError(err.response);
+      } finally {
+        isLoadingDashboard.value = false;
+      }
+    };
+
+    const dashboardPeriods = computed(() => {
+      if (!dashboard.value) return [];
+      return [
+        { key: 'today', label: t$('home.dashboard.activity.today'), data: dashboard.value.today },
+        { key: 'week', label: t$('home.dashboard.activity.week'), data: dashboard.value.week },
+        { key: 'month', label: t$('home.dashboard.activity.month'), data: dashboard.value.month },
+      ];
+    });
+
+    const activityChartMax = computed(() =>
+      Math.max(1, ...dashboardPeriods.value.flatMap(period => [period.data.orders, period.data.newUsers, period.data.reviews])),
+    );
+    const revenueChartMax = computed(() => Math.max(1, ...dashboardPeriods.value.map(period => period.data.revenue)));
+    const orderStatusTotal = computed(() => {
+      if (!dashboard.value) return 0;
+      return Object.values(dashboard.value.orderStatuses).reduce((total, value) => total + value, 0);
+    });
+    const inventoryChartMax = computed(() => {
+      if (!dashboard.value) return 1;
+      return Math.max(1, ...Object.values(dashboard.value.catalog));
+    });
+    const activeOrderTotal = computed(() => {
+      if (!dashboard.value) return 0;
+      const statuses = dashboard.value.orderStatuses;
+      return statuses.pending + statuses.paid + statuses.processing + statuses.shipped;
+    });
+    const inventoryAttentionTotal = computed(() => {
+      if (!dashboard.value) return 0;
+      return dashboard.value.catalog.lowStock + dashboard.value.catalog.outOfStock;
+    });
+
+    const chartPercent = (value: number, maximum: number, minimumVisible = 4) => {
+      if (!value || !maximum) return '0%';
+      return `${Math.max((value / maximum) * 100, minimumVisible)}%`;
+    };
+    const formatPercentage = (value: number, total: number) => (total ? `${Math.round((value / total) * 100)}%` : '0%');
+
+    const formatCurrency = (value?: number) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value ?? 0));
+    const formatNumber = (value?: number) => new Intl.NumberFormat('en-US').format(Number(value ?? 0));
+    const formatGeneratedAt = (value?: string) => (value ? new Date(value).toLocaleString() : '');
+    const printDashboard = () => {
+      if (dashboard.value) {
+        const printModeClass = 'admin-dashboard-print-mode';
+        const clearPrintMode = () => document.body.classList.remove(printModeClass);
+        document.body.classList.add(printModeClass);
+        window.addEventListener('afterprint', clearPrintMode, { once: true });
+        window.print();
+      }
+    };
+
     onMounted(async () => {
       isAdmin.value = (await accountService?.hasAnyAuthorityAndCheckAuth(Authority.ADMIN)) ?? false;
       if (isAdmin.value) {
+        await retrieveDashboard();
         return;
       }
       isLoadingHome.value = true;
@@ -71,6 +166,22 @@ export default defineComponent({
       username,
       showLogin,
       isAdmin,
+      dashboard,
+      dashboardPeriods,
+      activityChartMax,
+      revenueChartMax,
+      orderStatusTotal,
+      inventoryChartMax,
+      activeOrderTotal,
+      inventoryAttentionTotal,
+      chartPercent,
+      formatPercentage,
+      isLoadingDashboard,
+      retrieveDashboard,
+      formatCurrency,
+      formatNumber,
+      formatGeneratedAt,
+      printDashboard,
       featuredProducts,
       categories,
       isLoadingHome,

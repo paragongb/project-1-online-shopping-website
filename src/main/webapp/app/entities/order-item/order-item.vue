@@ -164,6 +164,13 @@
             <span class="order-card-item-subtotal">{{ '$' + ((item.priceAtPurchase ?? 0) * (item.quantity ?? 0)).toFixed(2) }}</span>
           </li>
         </ul>
+        <div class="order-card-address" v-if="order.shippingAddress">
+          <span class="order-card-address-icon"><font-awesome-icon icon="location-dot"></font-awesome-icon></span>
+          <div>
+            <strong>{{ t$('project1OnlineShoppingWebsiteApp.orderItem.myOrders.deliveryAddress') }}</strong>
+            <span>{{ formatAddress(order.shippingAddress) }}</span>
+          </div>
+        </div>
         <div class="order-card-footer">
           <span>{{ t$('project1OnlineShoppingWebsiteApp.shoppingCart.myCart.total') }}</span>
           <span class="order-card-total">{{ '$' + (order.totalAmount ?? 0).toFixed(2) }}</span>

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createPinia } from 'pinia';
 
 import { type MountingOptions, shallowMount } from '@vue/test-utils';
 
@@ -38,6 +39,7 @@ describe('Component Tests', () => {
       });
 
       mountOptions = {
+        plugins: [createPinia()],
         stubs: {
           jhiItemCount: true,
           bPagination: true,
@@ -54,6 +56,9 @@ describe('Component Tests', () => {
         provide: {
           alertService,
           productService: () => productServiceStub,
+          accountService: {
+            hasAnyAuthorityAndCheckAuth: vi.fn().mockResolvedValue(true),
+          },
         },
       };
     });
