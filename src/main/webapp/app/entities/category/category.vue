@@ -160,7 +160,7 @@
         <div>
           <strong>{{ t$('project1OnlineShoppingWebsiteApp.category.delete.confirmTitle') }}</strong>
           <p id="jhi-delete-category-heading">
-            {{ t$('project1OnlineShoppingWebsiteApp.category.delete.question', { id: removeId }) }}
+            Remove <strong>{{ categoryToRemove?.name }}</strong> (category #{{ removeId }})? This cannot be undone.
           </p>
         </div>
       </div>

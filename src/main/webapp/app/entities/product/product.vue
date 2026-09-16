@@ -201,7 +201,9 @@
         <span><font-awesome-icon icon="times-circle"></font-awesome-icon></span>
         <div>
           <strong>{{ t$('project1OnlineShoppingWebsiteApp.product.admin.deleteTitle') }}</strong>
-          <p id="jhi-delete-product-heading">{{ t$('project1OnlineShoppingWebsiteApp.product.delete.question', { id: removeId }) }}</p>
+          <p id="jhi-delete-product-heading">
+            Remove <strong>{{ productToRemove?.name }}</strong> (product #{{ removeId }})? This cannot be undone.
+          </p>
         </div>
       </div>
       <template #footer>
@@ -257,6 +259,45 @@
           <option value="price,desc">{{ t$('project1OnlineShoppingWebsiteApp.product.shop.sortPriceDesc') }}</option>
         </select>
       </div>
+    </div>
+    <div class="shop-filter-bar" aria-label="Product filters">
+      <div class="shop-category-chips">
+        <button type="button" class="shop-filter-chip" :class="{ active: !selectedCategoryId }" @click="selectedCategoryId = ''">
+          All categories
+        </button>
+        <button
+          v-for="category in categories"
+          :key="category.id"
+          type="button"
+          class="shop-filter-chip"
+          :class="{ active: selectedCategoryId === String(category.id) }"
+          @click="selectedCategoryId = String(category.id)"
+        >
+          {{ category.name }}
+        </button>
+      </div>
+      <div class="shop-filter-options">
+        <label for="shop-availability">Availability</label>
+        <select id="shop-availability" v-model="availability" class="form-select form-select-sm">
+          <option value="all">All products</option>
+          <option value="IN_STOCK">In stock</option>
+          <option value="PRE_ORDER">Pre-order</option>
+          <option value="OUT_OF_STOCK">Out of stock</option>
+        </select>
+        <button v-if="activeFilterCount" type="button" class="btn shop-clear-filters" @click="clearShopFilters">
+          Clear filters ({{ activeFilterCount }})
+        </button>
+      </div>
+    </div>
+    <div v-if="cartConfirmation" class="shop-cart-confirmation" role="status" aria-live="polite">
+      <span class="shop-cart-confirmation-icon"><font-awesome-icon icon="check"></font-awesome-icon></span>
+      <span
+        ><strong>{{ cartConfirmation.name }}</strong> added to your cart.</span
+      >
+      <router-link :to="{ name: 'ShoppingCart' }" class="btn btn-sm shop-cart-confirmation-link">View cart</router-link>
+      <button type="button" class="shop-cart-confirmation-close" aria-label="Dismiss confirmation" @click="cartConfirmation = null">
+        ×
+      </button>
     </div>
 
     <div class="shop-loading" v-if="isFetching">

@@ -5,6 +5,177 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 
+.back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1040;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: #1d4ed8;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25);
+}
+
+.back-to-top:hover {
+  background: #1e3a8a;
+}
+
+@media (max-width: 767px) {
+  #app:has(.mobile-shop-nav) .container-fluid {
+    padding-bottom: 5rem;
+  }
+  #app:has(.mobile-shop-nav) .back-to-top {
+    bottom: 5.5rem;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bs-body-bg: #0b1220;
+  --bs-body-color: #e2e8f0;
+  --bs-border-color: #334155;
+  --bs-card-bg: #111c30;
+  --bs-secondary-color: #94a3b8;
+}
+
+:root[data-theme='dark'] body,
+:root[data-theme='dark'] #app {
+  background: #0b1220;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .jh-card,
+:root[data-theme='dark'] .card,
+:root[data-theme='dark'] .modal-content,
+:root[data-theme='dark'] .dropdown-menu,
+:root[data-theme='dark'] .shop-card,
+:root[data-theme='dark'] .wishlist-card,
+:root[data-theme='dark'] .cart-line,
+:root[data-theme='dark'] .admin-live-card,
+:root[data-theme='dark'] .admin-stat-card,
+:root[data-theme='dark'] .admin-period-card,
+:root[data-theme='dark'] .admin-dashboard-panel {
+  background: #111c30;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .shop-page,
+:root[data-theme='dark'] .admin-dashboard {
+  --shop-ink: #e2e8f0;
+  --shop-muted: #94a3b8;
+  --shop-border: #334155;
+  --dashboard-ink: #e2e8f0;
+  --dashboard-muted: #94a3b8;
+  --dashboard-border: #334155;
+}
+:root[data-theme='dark'] .landing-page {
+  --landing-ink: #e2e8f0;
+  --landing-muted: #94a3b8;
+  --landing-border: #334155;
+  --landing-blue-soft: #17253d;
+}
+:root[data-theme='dark'] .wishlist-page {
+  --wishlist-ink: #e2e8f0;
+  --wishlist-muted: #94a3b8;
+  --wishlist-border: #334155;
+  --wishlist-blue-soft: #17253d;
+}
+:root[data-theme='dark'] .cart-page {
+  --cart-ink: #e2e8f0;
+  --cart-muted: #94a3b8;
+  --cart-border: #334155;
+  --cart-blue-soft: #17253d;
+}
+:root[data-theme='dark'] .admin-products-page,
+:root[data-theme='dark'] .admin-reviews-page,
+:root[data-theme='dark'] .admin-categories-page,
+:root[data-theme='dark'] .admin-orders-page {
+  --product-ink: #e2e8f0;
+  --product-muted: #94a3b8;
+  --product-border: #334155;
+  --review-ink: #e2e8f0;
+  --review-muted: #94a3b8;
+  --review-border: #334155;
+  --category-ink: #e2e8f0;
+  --category-muted: #94a3b8;
+  --category-border: #334155;
+  --orders-ink: #e2e8f0;
+  --orders-muted: #94a3b8;
+  --orders-border: #334155;
+}
+:root[data-theme='dark'] .admin-products-summary > article,
+:root[data-theme='dark'] .admin-products-panel,
+:root[data-theme='dark'] .admin-reviews-summary > article,
+:root[data-theme='dark'] .admin-review-filters,
+:root[data-theme='dark'] .admin-review-card,
+:root[data-theme='dark'] .admin-categories-empty,
+:root[data-theme='dark'] .admin-categories-panel,
+:root[data-theme='dark'] .admin-category-item,
+:root[data-theme='dark'] .admin-orders-summary-card,
+:root[data-theme='dark'] .admin-orders-table-card,
+:root[data-theme='dark'] .admin-orders-empty {
+  background: #111c30;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .landing-trust,
+:root[data-theme='dark'] .landing-category-card,
+:root[data-theme='dark'] .landing-product-card,
+:root[data-theme='dark'] .landing-cart-confirmation,
+:root[data-theme='dark'] .cart-summary,
+:root[data-theme='dark'] .cart-empty,
+:root[data-theme='dark'] .wishlist-empty,
+:root[data-theme='dark'] .shop-modal-content {
+  background: #111c30;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .cart-address-field input {
+  background: #17253d;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .cart-address-field span,
+:root[data-theme='dark'] .cart-summary-total,
+:root[data-theme='dark'] .shop-modal-price,
+:root[data-theme='dark'] .admin-live-heading h3 {
+  color: #bfdbfe;
+}
+:root[data-theme='dark'] .form-control,
+:root[data-theme='dark'] .form-select {
+  background-color: #17253d;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #e2e8f0;
+  --bs-table-border-color: #334155;
+}
+:root[data-theme='dark'] .form-control::placeholder {
+  color: #94a3b8;
+}
+:root[data-theme='dark'] .shop-filter-chip,
+:root[data-theme='dark'] .shop-clear-filters,
+:root[data-theme='dark'] .shop-cart-confirmation,
+:root[data-theme='dark'] .mobile-shop-nav {
+  background: #17253d;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+:root[data-theme='dark'] .shop-filter-chip.active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+:root[data-theme='dark'] .admin-live-heading h3,
+:root[data-theme='dark'] .admin-live-row strong {
+  color: #bfdbfe;
+}
+
 /* Up to bootstrap-vue-next 0.45 the orchestrator mapped a toast position such as `top-end` to the
 Bootstrap utilities `top-0 end-0`. Since 0.46 it sets the raw position as the container class, and no
 stylesheet defines it, so toast containers are left unpositioned. Drop this once upstream maps them again. */

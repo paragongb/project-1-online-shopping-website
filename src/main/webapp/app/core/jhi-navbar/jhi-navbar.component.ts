@@ -8,7 +8,8 @@ import type AccountService from '@/account/account.service';
 import { useLoginModal } from '@/account/login-modal';
 import languages from '@/shared/config/languages';
 import { AUTHENTICATION_TOKEN_KEY } from '@/shared/jhipster/constants';
-import { useCartStore, useStore } from '@/store';
+import { useCartStore, useStore, useWishlistStore } from '@/store';
+import { useTheme } from '@/shared/config/theme';
 
 export default defineComponent({
   name: 'JhiNavbar',
@@ -23,6 +24,9 @@ export default defineComponent({
     const router = useRouter();
     const store = useStore();
     const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
+    const theme = useTheme();
+    theme.initialize();
 
     const version = `v${APP_VERSION}`;
     const hasAnyAuthorityValues: Ref = ref({});
@@ -41,6 +45,8 @@ export default defineComponent({
       globalThis.localStorage?.removeItem(AUTHENTICATION_TOKEN_KEY);
       globalThis.sessionStorage?.removeItem(AUTHENTICATION_TOKEN_KEY);
       store.logout();
+      wishlistStore.reset();
+      cartStore.reset();
       if (router.currentRoute.value.path !== '/') {
         await router.push('/');
       }
@@ -61,6 +67,9 @@ export default defineComponent({
       inProduction,
       authenticated,
       cartStore,
+      wishlistStore,
+      darkTheme: theme.dark,
+      toggleTheme: theme.toggle,
       t$: useI18n().t,
     };
   },

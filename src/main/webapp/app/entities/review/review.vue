@@ -184,7 +184,10 @@
         <span><font-awesome-icon icon="times-circle"></font-awesome-icon></span>
         <div>
           <strong>{{ t$('project1OnlineShoppingWebsiteApp.review.admin.deleteTitle') }}</strong>
-          <p id="jhi-delete-review-heading">{{ t$('project1OnlineShoppingWebsiteApp.review.delete.question', { id: removeId }) }}</p>
+          <p id="jhi-delete-review-heading">
+            Remove the {{ reviewToRemove?.rating }}-star review of <strong>{{ reviewToRemove?.product?.name || 'this product' }}</strong> by
+            {{ reviewToRemove?.user?.login || 'this customer' }}? This cannot be undone.
+          </p>
         </div>
       </div>
       <template #footer>

@@ -149,6 +149,15 @@
             <span>{{ t$('global.menu.account.register') }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>
+        <button
+          type="button"
+          class="navbar-theme-toggle"
+          :aria-label="darkTheme ? 'Switch to light mode' : 'Switch to dark mode'"
+          :title="darkTheme ? 'Light mode' : 'Dark mode'"
+          @click="toggleTheme"
+        >
+          <font-awesome-icon :icon="darkTheme ? 'sun' : 'moon'" />
+        </button>
       </b-navbar-nav>
 
       <b-navbar-nav class="ms-auto navbar-user-nav" v-else>
@@ -162,7 +171,7 @@
           <span>
             <font-awesome-icon icon="cart-shopping" />
             <span>{{ t$('global.menu.cart') }}</span>
-            <span class="badge rounded-pill bg-danger navbar-cart-badge" v-if="cartStore.totalItemCount > 0">
+            <span class="badge rounded-pill navbar-cart-badge" v-if="cartStore.totalItemCount > 0">
               {{ cartStore.totalItemCount }}
             </span>
           </span>
@@ -183,8 +192,20 @@
           <span>
             <font-awesome-icon icon="heart" />
             <span>{{ t$('global.menu.entities.wishlist') }}</span>
+            <span class="badge rounded-pill navbar-cart-badge" v-if="wishlistStore.products.length > 0">{{
+              wishlistStore.products.length
+            }}</span>
           </span>
         </b-nav-item>
+        <button
+          type="button"
+          class="navbar-theme-toggle"
+          :aria-label="darkTheme ? 'Switch to light mode' : 'Switch to dark mode'"
+          :title="darkTheme ? 'Light mode' : 'Dark mode'"
+          @click="toggleTheme"
+        >
+          <font-awesome-icon :icon="darkTheme ? 'sun' : 'moon'" />
+        </button>
         <b-nav-item-dropdown
           right
           id="account-menu"
@@ -223,6 +244,19 @@
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
+  <nav v-if="authenticated && !hasAnyAuthority('ROLE_ADMIN')" class="mobile-shop-nav" aria-label="Mobile shop navigation">
+    <router-link to="/" exact-active-class="active"><font-awesome-icon icon="home" /><span>Home</span></router-link>
+    <router-link :to="{ name: 'Product' }" active-class="active"><font-awesome-icon icon="shirt" /><span>Products</span></router-link>
+    <router-link :to="{ name: 'Wishlist' }" active-class="active"
+      ><font-awesome-icon icon="heart" /><span>Wishlist</span
+      ><small v-if="wishlistStore.products.length">{{ wishlistStore.products.length }}</small></router-link
+    >
+    <router-link :to="{ name: 'ShoppingCart' }" active-class="active"
+      ><font-awesome-icon icon="cart-shopping" /><span>Cart</span
+      ><small v-if="cartStore.totalItemCount">{{ cartStore.totalItemCount }}</small></router-link
+    >
+    <router-link to="/account/settings" active-class="active"><font-awesome-icon icon="user" /><span>Account</span></router-link>
+  </nav>
 </template>
 
 <script lang="ts" src="./jhi-navbar.component.ts"></script>
@@ -327,6 +361,68 @@
 }
 
 .navbar-user-nav .navbar-cart-badge {
-  background-color: #ef4444 !important;
+  background-color: #dbeafe !important;
+  color: #1e3a8a;
+}
+
+.navbar-theme-toggle {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.mobile-shop-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-shop-nav {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 1050;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0.45rem max(0.35rem, env(safe-area-inset-right)) max(0.45rem, env(safe-area-inset-bottom))
+      max(0.35rem, env(safe-area-inset-left));
+    border-top: 1px solid #bfdbfe;
+    background: #fff;
+    box-shadow: 0 -5px 20px rgba(30, 58, 138, 0.09);
+  }
+  .mobile-shop-nav a {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.12rem;
+    padding: 0.28rem 0;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+  .mobile-shop-nav a svg {
+    font-size: 1.15rem;
+  }
+  .mobile-shop-nav a.active {
+    color: #1d4ed8;
+  }
+  .mobile-shop-nav small {
+    position: absolute;
+    top: -0.1rem;
+    right: 21%;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    color: #fff;
+    text-align: center;
+    font-size: 0.6rem;
+  }
 }
 </style>

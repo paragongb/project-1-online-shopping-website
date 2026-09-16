@@ -17,6 +17,9 @@
         </b-modal>
         <jhi-footer></jhi-footer>
       </div>
+      <button v-if="showBackToTop" type="button" class="back-to-top" aria-label="Back to top" title="Back to top" @click="backToTop">
+        <font-awesome-icon icon="arrow-up" />
+      </button>
     </div>
   </BApp>
 </template>

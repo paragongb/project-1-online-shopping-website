@@ -96,6 +96,64 @@
         </div>
       </section>
 
+      <section class="admin-dashboard-section admin-live-activity">
+        <div class="admin-dashboard-section-heading">
+          <div>
+            <h2>Recent activity</h2>
+            <p>Latest store events and items that need attention.</p>
+          </div>
+        </div>
+        <div class="admin-live-grid">
+          <article class="admin-live-card">
+            <div class="admin-live-heading">
+              <h3>Recent orders</h3>
+              <router-link :to="{ name: 'CustomerOrder' }">View all</router-link>
+            </div>
+            <p v-if="!recentOrders.length" class="admin-live-empty">No recent orders.</p>
+            <div v-for="order in recentOrders" :key="order.id" class="admin-live-row">
+              <span
+                >Order #{{ order.id }}<small>{{ order.user?.login || 'Customer' }}</small></span
+              ><strong>{{ formatCurrency(order.totalAmount) }}</strong>
+            </div>
+          </article>
+          <article class="admin-live-card">
+            <div class="admin-live-heading">
+              <h3>Recent reviews</h3>
+              <router-link :to="{ name: 'Review' }">View all</router-link>
+            </div>
+            <p v-if="!recentReviews.length" class="admin-live-empty">No recent reviews.</p>
+            <div v-for="review in recentReviews" :key="review.id" class="admin-live-row">
+              <span
+                >{{ review.product?.name || 'Product' }}<small>{{ review.user?.login || 'Customer' }}</small></span
+              ><strong class="admin-live-rating">{{ review.rating }} ★</strong>
+            </div>
+          </article>
+          <article class="admin-live-card">
+            <div class="admin-live-heading">
+              <h3>Recent users</h3>
+              <router-link to="/admin/user-management">View all</router-link>
+            </div>
+            <p v-if="!recentUsers.length" class="admin-live-empty">No recent users.</p>
+            <div v-for="user in recentUsers" :key="user.id" class="admin-live-row">
+              <span
+                >{{ user.login }}<small>{{ user.email }}</small></span
+              ><small>{{ formatGeneratedAt(user.createdDate) }}</small>
+            </div>
+          </article>
+          <article class="admin-live-card">
+            <div class="admin-live-heading">
+              <h3>Low stock</h3>
+              <router-link :to="{ name: 'Product' }">View all</router-link>
+            </div>
+            <p v-if="!lowStockProducts.length" class="admin-live-empty">No products are low on stock.</p>
+            <div v-for="product in lowStockProducts" :key="product.id" class="admin-live-row">
+              <span>{{ product.name }}</span
+              ><strong>{{ product.stockQuantity }} left</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section class="admin-dashboard-section">
         <div class="admin-dashboard-section-heading">
           <div>
@@ -641,6 +699,15 @@
         </div>
       </div>
     </section>
+
+    <div v-if="cartConfirmation" class="landing-cart-confirmation" role="status" aria-live="polite">
+      <font-awesome-icon icon="check" />
+      <span
+        ><strong>{{ cartConfirmation.name }}</strong> added to your cart.</span
+      >
+      <router-link :to="{ name: 'ShoppingCart' }">View cart</router-link>
+      <button type="button" aria-label="Dismiss confirmation" @click="cartConfirmation = null">×</button>
+    </div>
 
     <section class="landing-cta">
       <h2>{{ t$('home.landing.ctaTitle') }}</h2>

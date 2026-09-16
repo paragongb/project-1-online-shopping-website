@@ -1,4 +1,111 @@
 // Administrator-only business dashboard.
+.landing-cart-confirmation {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: min(420px, calc(100vw - 2rem));
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 14px 35px rgba(30, 58, 138, 0.18);
+}
+.landing-cart-confirmation > svg {
+  color: #1d4ed8;
+}
+.landing-cart-confirmation a {
+  white-space: nowrap;
+  color: #1d4ed8;
+}
+.landing-cart-confirmation button {
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 1.25rem;
+}
+@media (max-width: 767px) {
+  .landing-cart-confirmation {
+    bottom: 5.5rem;
+    left: 1rem;
+    right: 1rem;
+  }
+}
+
+.admin-live-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.admin-live-card {
+  min-width: 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(30, 58, 138, 0.05);
+}
+
+.admin-live-heading,
+.admin-live-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-live-heading {
+  margin-bottom: 0.5rem;
+}
+.admin-live-heading h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+.admin-live-heading a {
+  color: #1d4ed8;
+  font-size: 0.8rem;
+}
+.admin-live-row {
+  padding: 0.58rem 0;
+  border-top: 1px solid #eff4ff;
+  font-size: 0.85rem;
+}
+.admin-live-row > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-live-row small {
+  display: block;
+  color: #64748b;
+  font-size: 0.74rem;
+  font-weight: 400;
+}
+.admin-live-row strong {
+  white-space: nowrap;
+  color: #1e3a8a;
+}
+.admin-live-rating {
+  color: #d97706 !important;
+}
+.admin-live-empty {
+  margin: 1rem 0 0;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .admin-live-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-dashboard {
   --dashboard-blue: #1d4ed8;
   --dashboard-blue-dark: #1e3a8a;

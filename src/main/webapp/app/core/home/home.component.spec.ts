@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ref } from 'vue';
 
 import { createTestingPinia } from '@pinia/testing';
@@ -24,10 +24,13 @@ describe('Home', () => {
         plugins: [createTestingPinia()],
         stubs: {
           'router-link': true,
+          'font-awesome-icon': true,
         },
         provide: {
           authenticated,
           currentUsername,
+          alertService: { showInfo: vi.fn(), showHttpError: vi.fn() },
+          accountService: { hasAnyAuthorityAndCheckAuth: vi.fn().mockResolvedValue(false) },
         },
       },
     });

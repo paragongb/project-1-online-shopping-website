@@ -3,6 +3,7 @@ import { type IntlDateTimeFormats, createI18n } from 'vue-i18n';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons/faArrowUp';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons/faArrowsRotate';
 import { faAsterisk } from '@fortawesome/free-solid-svg-icons/faAsterisk';
 import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
@@ -25,6 +26,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';
 import { faList } from '@fortawesome/free-solid-svg-icons/faList';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons/faLocationDot';
+import { faMoon } from '@fortawesome/free-solid-svg-icons/faMoon';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons/faPencilAlt';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faPrint } from '@fortawesome/free-solid-svg-icons/faPrint';
@@ -41,6 +43,7 @@ import { faSortDown } from '@fortawesome/free-solid-svg-icons/faSortDown';
 import { faSortUp } from '@fortawesome/free-solid-svg-icons/faSortUp';
 import { faStar } from '@fortawesome/free-solid-svg-icons/faStar';
 import { faSync } from '@fortawesome/free-solid-svg-icons/faSync';
+import { faSun } from '@fortawesome/free-solid-svg-icons/faSun';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons/faTachometerAlt';
 import { faTags } from '@fortawesome/free-solid-svg-icons/faTags';
 import { faTasks } from '@fortawesome/free-solid-svg-icons/faTasks';
@@ -70,6 +73,7 @@ export function initFortAwesome(vue: App) {
 
   library.add(
     faArrowLeft,
+    faArrowUp,
     faArrowsRotate,
     faAsterisk,
     faBan,
@@ -92,6 +96,7 @@ export function initFortAwesome(vue: App) {
     faList,
     faLock,
     faLocationDot,
+    faMoon,
     faPencilAlt,
     faPlus,
     faPrint,
@@ -108,6 +113,7 @@ export function initFortAwesome(vue: App) {
     faSortUp,
     faStar,
     faSync,
+    faSun,
     faTachometerAlt,
     faTags,
     faTasks,

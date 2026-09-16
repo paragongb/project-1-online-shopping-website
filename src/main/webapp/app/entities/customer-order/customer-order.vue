@@ -182,7 +182,7 @@
                     </router-link>
                     <b-button
                       v-if="customerOrder.status !== 'DELIVERED'"
-                      @click="markDelivered(customerOrder)"
+                      @click="prepareDelivery(customerOrder)"
                       :disabled="isMarkingDelivered"
                       class="btn admin-order-action admin-order-action-deliver"
                       :title="t$('project1OnlineShoppingWebsiteApp.customerOrder.delivered')"
@@ -261,6 +261,26 @@
       <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
     </div>
 
+    <b-modal ref="deliverEntity" id="deliverEntity" title="Confirm delivery">
+      <p>
+        Mark order <strong>{{ formatOrderNumber(orderToDeliver?.id) }}</strong> for
+        {{ orderToDeliver ? formatCustomer(orderToDeliver) : 'this customer' }} as delivered?
+      </p>
+      <template #footer>
+        <div class="admin-orders-modal-actions">
+          <button type="button" class="btn admin-orders-button admin-orders-button-secondary" @click="deliverEntity.hide()">Cancel</button>
+          <button
+            type="button"
+            class="btn admin-orders-button admin-orders-button-primary"
+            :disabled="isMarkingDelivered"
+            @click="markDelivered(orderToDeliver)"
+          >
+            Mark delivered
+          </button>
+        </div>
+      </template>
+    </b-modal>
+
     <b-modal ref="removeEntity" id="removeEntity">
       <template #title>
         <span id="project1OnlineShoppingWebsiteApp.customerOrder.delete.question" data-cy="customerOrderDeleteDialogHeading">
@@ -269,7 +289,8 @@
       </template>
       <div class="modal-body">
         <p id="jhi-delete-customerOrder-heading">
-          {{ t$('project1OnlineShoppingWebsiteApp.customerOrder.delete.question', { id: removeId }) }}
+          Delete order <strong>{{ formatOrderNumber(orderToRemove?.id) }}</strong> for
+          {{ orderToRemove ? formatCustomer(orderToRemove) : 'this customer' }}? This cannot be undone.
         </p>
       </div>
       <template #footer>

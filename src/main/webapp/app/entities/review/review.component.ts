@@ -151,9 +151,11 @@ export default defineComponent({
     });
 
     const removeId: Ref<number> = ref(null);
+    const reviewToRemove: Ref<IReview> = ref(null);
     const removeEntity = ref<any>(null);
     const prepareRemove = (instance: IReview) => {
       removeId.value = instance.id;
+      reviewToRemove.value = instance;
       removeEntity.value.show();
     };
     const closeDialog = () => {
@@ -216,6 +218,7 @@ export default defineComponent({
       clear,
       ...dateFormat,
       removeId,
+      reviewToRemove,
       removeEntity,
       prepareRemove,
       closeDialog,

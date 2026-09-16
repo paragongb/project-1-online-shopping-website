@@ -1,4 +1,4 @@
-import { type ComputedRef, type Ref, computed, defineComponent, inject, onMounted, ref } from 'vue';
+import { type ComputedRef, type Ref, computed, defineComponent, inject, onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import axios from 'axios';
@@ -10,7 +10,10 @@ import ProductService from '@/entities/product/product.service';
 import { useAlertService } from '@/shared/alert/alert.service';
 import { Authority } from '@/shared/jhipster/constants';
 import { type ICategory } from '@/shared/model/category.model';
+import { type ICustomerOrder } from '@/shared/model/customer-order.model';
 import { type IProduct } from '@/shared/model/product.model';
+import { type IReview } from '@/shared/model/review.model';
+import { type IUser } from '@/shared/model/user.model';
 import { useCartStore } from '@/store';
 
 interface IDashboardPeriod {
@@ -52,11 +55,17 @@ export default defineComponent({
 
     const isAdmin = ref(false);
     const dashboard: Ref<IAdminDashboardStats> = ref(null);
+    const recentOrders = ref<ICustomerOrder[]>([]);
+    const recentReviews = ref<IReview[]>([]);
+    const recentUsers = ref<IUser[]>([]);
+    const lowStockProducts = ref<IProduct[]>([]);
     const isLoadingDashboard = ref(false);
     const featuredProducts: Ref<IProduct[]> = ref([]);
     const categories: Ref<ICategory[]> = ref([]);
     const isLoadingHome = ref(false);
     const addingToCartId: Ref<number> = ref(null);
+    const cartConfirmation: Ref<IProduct> = ref(null);
+    let cartConfirmationTimer: ReturnType<typeof setTimeout>;
 
     const productService = new ProductService();
     const categoryService = new CategoryService();
@@ -66,6 +75,17 @@ export default defineComponent({
       try {
         const response = await axios.get<IAdminDashboardStats>('api/admin/dashboard');
         dashboard.value = response.data;
+        const activity = await Promise.allSettled([
+          axios.get('api/customer-orders', { params: { page: 0, size: 4, sort: 'placedDate,desc' } }),
+          axios.get('api/reviews', { params: { page: 0, size: 4, sort: 'reviewDate,desc' } }),
+          axios.get('api/admin/users', { params: { page: 0, size: 4, sort: 'createdDate,desc' } }),
+          axios.get('api/products', { params: { page: 0, size: 5, sort: 'stockQuantity,asc' } }),
+        ]);
+        if (activity[0].status === 'fulfilled') recentOrders.value = activity[0].value.data ?? [];
+        if (activity[1].status === 'fulfilled') recentReviews.value = activity[1].value.data ?? [];
+        if (activity[2].status === 'fulfilled') recentUsers.value = activity[2].value.data ?? [];
+        if (activity[3].status === 'fulfilled')
+          lowStockProducts.value = (activity[3].value.data ?? []).filter(product => Number(product.stockQuantity ?? 0) <= 5);
       } catch (err: any) {
         alertService.showHttpError(err.response);
       } finally {
@@ -153,6 +173,9 @@ export default defineComponent({
       addingToCartId.value = product.id;
       try {
         await cartStore.addToCart(product.id, 1);
+        cartConfirmation.value = product;
+        clearTimeout(cartConfirmationTimer);
+        cartConfirmationTimer = setTimeout(() => (cartConfirmation.value = null), 5000);
         alertService.showInfo(t$('home.addedToCart', { name: product.name }).toString());
       } catch (err) {
         alertService.showHttpError(err.response);
@@ -160,6 +183,7 @@ export default defineComponent({
         addingToCartId.value = null;
       }
     };
+    onUnmounted(() => clearTimeout(cartConfirmationTimer));
 
     return {
       authenticated,
@@ -167,6 +191,10 @@ export default defineComponent({
       showLogin,
       isAdmin,
       dashboard,
+      recentOrders,
+      recentReviews,
+      recentUsers,
+      lowStockProducts,
       dashboardPeriods,
       activityChartMax,
       revenueChartMax,
@@ -186,6 +214,7 @@ export default defineComponent({
       categories,
       isLoadingHome,
       addingToCartId,
+      cartConfirmation,
       addToCart,
       t$,
     };

@@ -40,6 +40,8 @@ export default defineComponent({
     const isLoadingItems = ref(false);
     const orderItemsByOrderId = ref<Record<number, IOrderItemRow[]>>({});
     const isMarkingDelivered = ref(false);
+    const orderToDeliver: Ref<ICustomerOrder> = ref(null);
+    const deliverEntity = ref<any>(null);
 
     const visibleOrderValue = computed(() => customerOrders.value.reduce((total, order) => total + Number(order.totalAmount ?? 0), 0));
     const activeOrderCount = computed(
@@ -131,6 +133,8 @@ export default defineComponent({
         }
         const message = t$('project1OnlineShoppingWebsiteApp.customerOrder.deliveredSuccess', { param: customerOrder.id }).toString();
         alertService.showInfo(message, { variant: 'success' });
+        deliverEntity.value?.hide();
+        orderToDeliver.value = null;
       } catch (error) {
         alertService.showHttpError(error.response);
       } finally {
@@ -138,10 +142,17 @@ export default defineComponent({
       }
     };
 
+    const prepareDelivery = (order: ICustomerOrder) => {
+      orderToDeliver.value = order;
+      deliverEntity.value.show();
+    };
+
     const removeId: Ref<number> = ref(null);
+    const orderToRemove: Ref<ICustomerOrder> = ref(null);
     const removeEntity = ref<any>(null);
     const prepareRemove = (instance: ICustomerOrder) => {
       removeId.value = instance.id;
+      orderToRemove.value = instance;
       removeEntity.value.show();
     };
     const closeDialog = () => {
@@ -193,6 +204,10 @@ export default defineComponent({
       clear,
       ...dateFormat,
       removeId,
+      orderToRemove,
+      orderToDeliver,
+      deliverEntity,
+      prepareDelivery,
       removeEntity,
       prepareRemove,
       closeDialog,

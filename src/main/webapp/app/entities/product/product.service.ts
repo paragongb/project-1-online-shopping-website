@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { type IProduct } from '@/shared/model/product.model';
-import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
 const baseApiUrl = 'api/products';
 
@@ -21,8 +20,14 @@ export default class ProductService {
 
   retrieve(paginationQuery?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
+      const query = paginationQuery
+        ? Object.entries(paginationQuery)
+            .flatMap(([key, value]) => (Array.isArray(value) ? value.map(item => [key, item]) : [[key, value]]))
+            .map(([key, value]) => `${encodeURIComponent(String(key))}=${encodeURIComponent(String(value))}`)
+            .join('&')
+        : '';
       axios
-        .get(`${baseApiUrl}?${buildPaginationQueryOpts(paginationQuery)}`)
+        .get(`${baseApiUrl}?${query}`)
         .then(res => {
           resolve(res);
         })

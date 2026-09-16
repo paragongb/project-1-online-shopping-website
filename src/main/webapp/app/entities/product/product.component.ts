@@ -1,4 +1,4 @@
-import { type Ref, computed, defineComponent, inject, onMounted, ref, watch } from 'vue';
+import { type Ref, computed, defineComponent, inject, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type AccountService from '@/account/account.service';
@@ -6,7 +6,9 @@ import { useAlertService } from '@/shared/alert/alert.service';
 import useDataUtils from '@/shared/data/data-utils.service';
 import { Authority } from '@/shared/jhipster/constants';
 import { type IProduct } from '@/shared/model/product.model';
+import { type ICategory } from '@/shared/model/category.model';
 import { useCartStore, useWishlistStore } from '@/store';
+import CategoryService from '@/entities/category/category.service';
 
 import ProductService from './product.service';
 
@@ -16,6 +18,7 @@ export default defineComponent({
     const { t: t$ } = useI18n();
     const dataUtils = useDataUtils();
     const productService = inject('productService', () => new ProductService());
+    const categoryService = inject('categoryService', () => new CategoryService());
     const alertService = inject('alertService', () => useAlertService(), true);
     const accountService = inject<AccountService>('accountService');
     const cartStore = useCartStore();
@@ -33,6 +36,11 @@ export default defineComponent({
     const isFetching = ref(false);
     const isAdmin = ref(false);
     const searchQuery = ref('');
+    const selectedCategoryId = ref('');
+    const availability = ref('all');
+    const categories: Ref<ICategory[]> = ref([]);
+    const cartConfirmation: Ref<IProduct> = ref(null);
+    let cartConfirmationTimer: ReturnType<typeof setTimeout>;
     const selectedProduct: Ref<IProduct> = ref(null);
     const showProductDetails = ref(false);
 
@@ -50,6 +58,9 @@ export default defineComponent({
       addingToCartId.value = product.id;
       try {
         await cartStore.addToCart(product.id, 1);
+        cartConfirmation.value = product;
+        clearTimeout(cartConfirmationTimer);
+        cartConfirmationTimer = setTimeout(() => (cartConfirmation.value = null), 5000);
         alertService.showInfo(t$('project1OnlineShoppingWebsiteApp.product.shop.addedToCart', { name: product.name }).toString());
       } catch (err) {
         alertService.showHttpError(err.response);
@@ -78,19 +89,15 @@ export default defineComponent({
       }
     };
 
-    const filteredProducts = computed(() => {
-      const query = searchQuery.value.trim().toLowerCase();
-      if (!query) {
-        return products.value;
-      }
-      return products.value.filter(product => {
-        return (
-          product.name?.toLowerCase().includes(query) ||
-          product.sku?.toLowerCase().includes(query) ||
-          product.category?.name?.toLowerCase().includes(query)
-        );
-      });
-    });
+    const filteredProducts = computed(() => products.value);
+    const activeFilterCount = computed(
+      () => Number(Boolean(searchQuery.value.trim())) + Number(Boolean(selectedCategoryId.value)) + Number(availability.value !== 'all'),
+    );
+    const clearShopFilters = () => {
+      searchQuery.value = '';
+      selectedCategoryId.value = '';
+      availability.value = 'all';
+    };
 
     const statusVariant = (status: string): string => {
       switch (status) {
@@ -141,6 +148,9 @@ export default defineComponent({
           page: page.value - 1,
           size: itemsPerPage.value,
           sort: sort(),
+          ...(!isAdmin.value && searchQuery.value.trim() ? { 'name.contains': searchQuery.value.trim() } : {}),
+          ...(!isAdmin.value && selectedCategoryId.value ? { 'categoryId.equals': selectedCategoryId.value } : {}),
+          ...(!isAdmin.value && availability.value !== 'all' ? { 'status.equals': availability.value } : {}),
         };
         const res = await productService().retrieve(paginationQuery);
         totalItems.value = Number(res.headers['x-total-count'] ?? 0);
@@ -160,12 +170,21 @@ export default defineComponent({
     onMounted(async () => {
       await retrieveProducts();
       isAdmin.value = (await accountService?.hasAnyAuthorityAndCheckAuth(Authority.ADMIN)) ?? false;
+      if (!isAdmin.value) {
+        try {
+          categories.value = (await categoryService().retrieve()).data ?? [];
+        } catch {
+          // Products remain usable when categories cannot be loaded.
+        }
+      }
     });
 
     const removeId: Ref<number> = ref(null);
+    const productToRemove: Ref<IProduct> = ref(null);
     const removeEntity = ref<any>(null);
     const prepareRemove = (instance: IProduct) => {
       removeId.value = instance.id;
+      productToRemove.value = instance;
       removeEntity.value.show();
     };
     const closeDialog = () => {
@@ -208,6 +227,19 @@ export default defineComponent({
     watch(page, async () => {
       await retrieveProducts();
     });
+    let searchTimer: ReturnType<typeof setTimeout>;
+    watch([searchQuery, selectedCategoryId, availability], () => {
+      if (isAdmin.value) return;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        if (page.value === 1) retrieveProducts();
+        else page.value = 1;
+      }, 200);
+    });
+    onUnmounted(() => {
+      clearTimeout(searchTimer);
+      clearTimeout(cartConfirmationTimer);
+    });
 
     return {
       products,
@@ -230,6 +262,13 @@ export default defineComponent({
       t$,
       isAdmin,
       searchQuery,
+      selectedCategoryId,
+      availability,
+      categories,
+      activeFilterCount,
+      clearShopFilters,
+      cartConfirmation,
+      productToRemove,
       filteredProducts,
       statusVariant,
       adminProductSummary,

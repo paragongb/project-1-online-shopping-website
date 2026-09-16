@@ -124,9 +124,11 @@ export default defineComponent({
     };
 
     const removeId: Ref<number> = ref(null);
+    const categoryToRemove: Ref<ICategory> = ref(null);
     const removeEntity = ref<any>(null);
     const prepareRemove = (instance: ICategory) => {
       removeId.value = instance.id;
+      categoryToRemove.value = instance;
       removeEntity.value.show();
     };
     const closeDialog = () => {
@@ -166,6 +168,7 @@ export default defineComponent({
       closeEditCategory,
       updateCategory,
       removeId,
+      categoryToRemove,
       removeEntity,
       prepareRemove,
       closeDialog,
