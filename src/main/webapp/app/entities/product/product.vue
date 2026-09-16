@@ -111,7 +111,7 @@
           </thead>
           <tbody>
             <tr v-for="product in products" :key="product.id" data-cy="entityTable">
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.name')">
                 <div class="admin-product-identity">
                   <button
                     type="button"
@@ -129,29 +129,29 @@
                   </div>
                 </div>
               </td>
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.sku')">
                 <span class="admin-product-sku">{{ product.sku }}</span>
               </td>
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.category')">
                 <span class="admin-product-category">{{
                   product.category?.name || t$('project1OnlineShoppingWebsiteApp.product.admin.uncategorized')
                 }}</span>
               </td>
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.price')">
                 <strong class="admin-product-price">{{ formatCurrency(product.price) }}</strong>
               </td>
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.admin.inventory')">
                 <div class="admin-product-stock" :class="{ 'admin-product-stock-low': Number(product.stockQuantity ?? 0) <= 5 }">
                   <strong>{{ product.stockQuantity ?? 0 }}</strong>
                   <span>{{ t$('project1OnlineShoppingWebsiteApp.product.admin.units') }}</span>
                 </div>
               </td>
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.status')">
                 <span class="admin-product-status" :class="'admin-product-status-' + statusVariant(product.status)">
                   {{ t$('project1OnlineShoppingWebsiteApp.ProductStatus.' + product.status) }}
                 </span>
               </td>
-              <td>
+              <td :data-label="t$('project1OnlineShoppingWebsiteApp.product.admin.actions')">
                 <div class="admin-product-actions">
                   <router-link :to="{ name: 'ProductView', params: { productId: product.id } }" custom v-slot="{ navigate }">
                     <button

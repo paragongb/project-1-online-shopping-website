@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="register-page">
     <div class="d-flex justify-content-center">
       <div class="col-md-8 toastify-container">
         <h1 id="register-title" data-cy="registerTitle">{{ t$('register.title') }}</h1>
 
         <div class="alert alert-success" role="alert" v-if="success" v-html="t$('register.messages.success')"></div>
+        <button v-if="success" type="button" class="btn btn-primary mb-3" @click="showLogin()">{{ t$('register.form.signIn') }}</button>
 
         <div class="alert alert-danger" role="alert" v-if="error" v-html="t$('register.messages.error.fail')"></div>
 
@@ -139,10 +140,10 @@
           <button type="submit" :disabled="v$.$invalid" class="btn btn-primary" data-cy="submit">{{ t$('register.form.button') }}</button>
         </form>
         <p></p>
-        <div class="alert alert-warning">
+        <div class="alert alert-warning" v-if="!success">
           <span>{{ t$('global.messages.info.authenticated.prefix') }}</span>
           <a class="alert-link" @click="showLogin()">{{ t$('global.messages.info.authenticated.link') }}</a
-          ><span v-html="t$('global.messages.info.authenticated.suffix')"></span>
+          ><span>{{ t$('global.messages.info.authenticated.suffix') }}</span>
         </div>
       </div>
     </div>

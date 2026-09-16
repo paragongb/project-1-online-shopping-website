@@ -26,8 +26,8 @@
 }
 
 @media (max-width: 767px) {
-  #app:has(.mobile-shop-nav) .container-fluid {
-    padding-bottom: 5rem;
+  #app:has(.mobile-shop-nav) > .container-fluid {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   }
   #app:has(.mobile-shop-nav) .back-to-top {
     bottom: 5.5rem;
@@ -410,14 +410,108 @@ Custom alerts for notification
 }
 
 @media screen and (max-width: 575px) {
+  #app > .container-fluid {
+    padding-inline: 0.75rem;
+  }
+
   .jh-card {
-    padding: 0.75rem;
-    margin-top: 0.75rem;
+    min-width: 0;
+    padding: 0.75rem 0;
+    margin-top: 0.5rem;
   }
 
   .footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .jh-card .d-flex.justify-content-center > .col-md-8,
+  .jh-card .d-flex.justify-content-center > .col-8 {
+    width: 100%;
+    max-width: 34rem;
+  }
+
+  .register-page h1 {
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    font-weight: 650;
+  }
+
+  .register-page .form-control,
+  .jh-card .form-control,
+  .jh-card .form-select,
+  .modal .form-control,
+  .modal .form-select {
+    min-height: 2.75rem;
+    font-size: 1rem;
+  }
+
+  .jh-card form > .btn,
+  .jh-card form > button {
+    min-height: 2.75rem;
+  }
+
+  #settings-form > .btn {
+    width: 100%;
+  }
+
+  .jh-card .jh-entity-heading {
+    overflow-wrap: anywhere;
+    font-size: 1.45rem;
+  }
+
+  .row-md.jh-entity-details {
+    grid-template-columns: minmax(0, 1fr);
+
+    dt {
+      margin-top: 0.65rem;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+
+    dd {
+      min-width: 0;
+      margin: 0;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .register-page #register-form > .btn {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  .modal-dialog {
+    margin: 0.75rem;
+  }
+
+  .modal-content {
+    border-radius: 16px;
+  }
+
+  .login-form,
+  .login-form > .row-md,
+  .login-form .col-md-12 {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .login-form form .btn {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 0.6rem;
+  }
+
+  .login-form .alert {
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+
+  .table-responsive {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

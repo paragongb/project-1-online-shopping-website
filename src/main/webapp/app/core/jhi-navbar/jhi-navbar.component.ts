@@ -28,7 +28,6 @@ export default defineComponent({
     const theme = useTheme();
     theme.initialize();
 
-    const version = `v${APP_VERSION}`;
     const hasAnyAuthorityValues: Ref = ref({});
 
     const openAPIEnabled = computed(() => store.activeProfiles.includes('api-docs'));
@@ -60,7 +59,6 @@ export default defineComponent({
       changeLanguage,
       languages: languages(),
       isActiveLanguage,
-      version,
       currentLanguage,
       hasAnyAuthorityValues,
       openAPIEnabled,

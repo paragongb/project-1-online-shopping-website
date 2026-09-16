@@ -514,6 +514,17 @@
   }
 
   @media (max-width: 600px) {
+    .admin-reviews-summary article {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.45rem;
+      padding: 0.8rem;
+
+      p {
+        white-space: normal;
+      }
+    }
+
     .admin-reviews-header {
       align-items: stretch;
       padding: 1.35rem;

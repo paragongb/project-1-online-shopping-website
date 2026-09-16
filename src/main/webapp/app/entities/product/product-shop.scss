@@ -510,4 +510,115 @@
     left: 1rem;
     right: 1rem;
   }
+
+  .shop-page {
+    .shop-hero {
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .shop-toolbar,
+    .shop-filter-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .shop-search,
+    .shop-sort,
+    .shop-sort-select,
+    .shop-filter-options,
+    .shop-filter-options select {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+    }
+
+    .shop-sort-select {
+      flex: 1 1 auto;
+    }
+
+    .shop-search-input,
+    .shop-sort-select,
+    .shop-filter-options select {
+      min-height: 44px;
+      font-size: 1rem;
+    }
+
+    .shop-category-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      max-width: calc(100vw - 1.5rem);
+      padding: 0.1rem 0 0.45rem;
+      scrollbar-width: none;
+    }
+
+    .shop-category-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .shop-filter-chip {
+      flex: 0 0 auto;
+      min-height: 40px;
+    }
+
+    .shop-clear-filters {
+      min-height: 44px;
+    }
+
+    .shop-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .shop-card-body {
+      min-width: 0;
+      padding: 0.75rem;
+    }
+
+    .shop-card-title {
+      overflow-wrap: anywhere;
+    }
+
+    .shop-card-description {
+      display: none;
+    }
+
+    .shop-card-footer {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .shop-btn-view,
+    .shop-btn-add-cart {
+      min-height: 44px;
+    }
+
+    .shop-wishlist-btn {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  .shop-modal-media,
+  .shop-modal-info {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .shop-modal-body {
+    padding: 1rem;
+  }
+
+  .shop-modal-actions > * {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 359px) {
+  .shop-page .shop-grid {
+    grid-template-columns: 1fr;
+  }
 }

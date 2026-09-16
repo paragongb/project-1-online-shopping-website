@@ -212,6 +212,10 @@
 }
 
 @media (max-width: 575px) {
+  .wishlist-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .wishlist-hero {
     align-items: start;
     padding: 1.5rem;
@@ -219,5 +223,10 @@
 
   .wishlist-title {
     font-size: 1.6rem;
+  }
+
+  .wishlist-actions > * {
+    flex: 1 1 auto;
+    min-height: 44px;
   }
 }

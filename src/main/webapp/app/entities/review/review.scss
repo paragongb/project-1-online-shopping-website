@@ -189,11 +189,30 @@
 }
 
 @media (max-width: 575px) {
+  .my-reviews-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .my-reviews-header {
     align-items: start;
     padding: 1.5rem;
   }
   .my-reviews-title {
     font-size: 1.6rem;
+  }
+
+  .my-review-heading {
+    flex-wrap: wrap;
+  }
+
+  .my-review-product-name {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .my-review-edit-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 }

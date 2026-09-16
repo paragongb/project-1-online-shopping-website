@@ -40,4 +40,10 @@ Development Ribbon
   text-shadow: 0 0 5px #444;
   pointer-events: none;
 }
+
+@media (max-width: 767px) {
+  .ribbon {
+    display: none;
+  }
+}
 </style>

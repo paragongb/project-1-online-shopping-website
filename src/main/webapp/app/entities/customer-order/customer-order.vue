@@ -99,10 +99,13 @@
                 class="admin-order-row"
                 data-cy="entityTable"
                 role="button"
+                tabindex="0"
                 @click="toggleOrderItems(customerOrder)"
+                @keydown.enter.prevent="toggleOrderItems(customerOrder)"
+                @keydown.space.prevent="toggleOrderItems(customerOrder)"
                 :aria-expanded="expandedOrderId === customerOrder.id"
               >
-                <td>
+                <td :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.home.order')">
                   <div class="admin-order-reference">
                     <button
                       type="button"
@@ -120,8 +123,10 @@
                     </router-link>
                   </div>
                 </td>
-                <td class="admin-order-date">{{ formatDateShort(customerOrder.placedDate) || '—' }}</td>
-                <td>
+                <td class="admin-order-date" :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.placedDate')">
+                  {{ formatDateShort(customerOrder.placedDate) || '—' }}
+                </td>
+                <td :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.user')">
                   <div class="admin-order-customer">
                     <span class="admin-order-customer-avatar">{{ formatCustomer(customerOrder).charAt(0).toUpperCase() }}</span>
                     <div>
@@ -130,13 +135,15 @@
                     </div>
                   </div>
                 </td>
-                <td>
+                <td :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.status')">
                   <span class="admin-order-status" :class="`admin-order-status-${customerOrder.status?.toLowerCase()}`">
                     {{ t$('project1OnlineShoppingWebsiteApp.OrderStatus.' + customerOrder.status) }}
                   </span>
                 </td>
-                <td class="admin-order-amount">{{ formatCurrency(customerOrder.totalAmount) }}</td>
-                <td>
+                <td class="admin-order-amount" :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.totalAmount')">
+                  {{ formatCurrency(customerOrder.totalAmount) }}
+                </td>
+                <td :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.shippingAddress')">
                   <router-link
                     v-if="customerOrder.shippingAddress"
                     class="admin-order-address"
@@ -148,7 +155,7 @@
                   </router-link>
                   <span v-else>—</span>
                 </td>
-                <td class="admin-order-actions" @click.stop>
+                <td class="admin-order-actions" :data-label="t$('project1OnlineShoppingWebsiteApp.customerOrder.actions')" @click.stop>
                   <div class="admin-order-action-group">
                     <router-link
                       :to="{ name: 'CustomerOrderView', params: { customerOrderId: customerOrder.id } }"

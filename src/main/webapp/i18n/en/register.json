@@ -2,7 +2,8 @@
   "register": {
     "title": "Registration",
     "form": {
-      "button": "Register"
+      "button": "Register",
+      "signIn": "Sign in"
     },
     "messages": {
       "validate": {
@@ -13,7 +14,7 @@
           "pattern": "Your username is invalid."
         }
       },
-      "success": "<strong>Registration saved!</strong> Please check your email for confirmation.",
+      "success": "<strong>Account created!</strong> You can sign in now.",
       "error": {
         "fail": "<strong>Registration failed!</strong> Please try again later.",
         "userexists": "<strong>Login name already registered!</strong> Please choose another one.",

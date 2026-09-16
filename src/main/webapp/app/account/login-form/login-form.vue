@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center login-form">
     <div class="row-md">
       <div class="col-md-12">
         <b-alert

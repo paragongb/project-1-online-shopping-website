@@ -10,8 +10,7 @@
     }"
   >
     <b-navbar-brand class="logo" to="/">
-      <span class="logo-img"></span>
-      <span class="navbar-title">{{ t$('global.title') }}</span> <span class="navbar-version">{{ version }}</span>
+      <span class="navbar-title">{{ t$('global.title') }}</span>
     </b-navbar-brand>
     <b-navbar-toggle
       right
@@ -24,7 +23,7 @@
       <font-awesome-icon icon="bars" />
     </b-navbar-toggle>
 
-    <b-collapse is-nav id="header-tabs">
+    <b-collapse is-nav id="header-tabs" :key="$route.path">
       <b-navbar-nav class="ms-auto navbar-admin-nav" v-if="hasAnyAuthority('ROLE_ADMIN')">
         <b-nav-item to="/" exact>
           <span>
@@ -266,11 +265,6 @@
 /* ==========================================================================
   Navbar
   ========================================================================== */
-.navbar-version {
-  font-size: 0.65em;
-  color: #ccc;
-}
-
 .navbar .navbar-nav .nav-item {
   margin-right: 0.5rem;
 }
@@ -317,27 +311,8 @@
   margin-right: 0.1rem;
 }
 
-/* ==========================================================================
-  Logo styles
-  ========================================================================== */
 .navbar-brand.logo {
   padding: 0 7px;
-}
-
-.logo .logo-img {
-  height: 45px;
-  display: inline-block;
-  vertical-align: middle;
-  width: 45px;
-}
-
-.logo-img {
-  height: 100%;
-  background: url('/content/images/logo-jhipster.png') no-repeat center center;
-  background-size: contain;
-  width: 100%;
-  filter: drop-shadow(0 0 0.05rem white);
-  margin: 0 5px;
 }
 
 /* ==========================================================================
@@ -383,6 +358,72 @@
 }
 
 @media (max-width: 767px) {
+  .navbar {
+    min-height: 56px;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .navbar-brand.logo {
+    padding: 0;
+    font-size: 1.2rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+  }
+
+  .jh-navbar-toggler {
+    min-width: 44px;
+    min-height: 44px;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .navbar :deep(#header-tabs) {
+    width: 100%;
+    padding: 0.35rem 0 0.55rem;
+  }
+
+  .navbar :deep(#header-tabs .navbar-nav) {
+    align-items: stretch;
+    gap: 0.15rem;
+    margin: 0 !important;
+  }
+
+  .navbar :deep(#header-tabs .nav-item) {
+    width: 100%;
+    margin: 0;
+  }
+
+  .navbar :deep(#header-tabs .nav-link),
+  .navbar :deep(#header-tabs .dropdown-toggle) {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    color: #fff;
+  }
+
+  .navbar :deep(#header-tabs .dropdown-menu) {
+    position: static;
+    width: 100%;
+    margin: 0.15rem 0 0.35rem;
+    border-radius: 10px;
+  }
+
+  .navbar :deep(#header-tabs .dropdown-item) {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    white-space: normal;
+  }
+
+  .navbar-theme-toggle {
+    align-self: flex-start;
+    width: 44px;
+    height: 44px;
+    margin: 0.25rem 0.75rem;
+  }
+
   .mobile-shop-nav {
     position: fixed;
     inset: auto 0 0;
@@ -400,7 +441,8 @@
     display: grid;
     justify-items: center;
     gap: 0.12rem;
-    padding: 0.28rem 0;
+    min-height: 48px;
+    padding: 0.3rem 0;
     color: #64748b;
     text-decoration: none;
     font-size: 0.65rem;

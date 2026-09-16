@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="user-management-page">
     <h2>
       <span id="user-management-page-heading" data-cy="UserManagementHeading">{{ t$('userManagement.home.title') }}</span>
 
@@ -16,7 +16,7 @@
       </div>
     </h2>
     <div class="table-responsive" v-if="users">
-      <table class="table table-striped" aria-describedby="Users">
+      <table class="table table-striped user-management-table" aria-describedby="Users">
         <thead>
           <tr>
             <th scope="col" @click="changeOrder('id')">
@@ -56,12 +56,12 @@
         </thead>
         <tbody v-if="users">
           <tr v-for="user in users" :key="user.id" :id="user.login" data-cy="entityTable">
-            <td>
+            <td :data-label="t$('global.field.id')">
               <router-link :to="{ name: 'JhiUserView', params: { userId: user.login } }">{{ user.id }}</router-link>
             </td>
-            <td>{{ user.login }}</td>
-            <td class="jhi-user-email">{{ user.email }}</td>
-            <td>
+            <td :data-label="t$('userManagement.login')">{{ user.login }}</td>
+            <td class="jhi-user-email" :data-label="t$('userManagement.email')">{{ user.email }}</td>
+            <td :data-label="t$('userManagement.activated')">
               <button class="btn btn-danger btn-sm deactivated" @click="setActive(user, true)" v-if="!user.activated">
                 {{ t$('userManagement.deactivated') }}
               </button>
@@ -74,16 +74,16 @@
                 {{ t$('userManagement.activated') }}
               </button>
             </td>
-            <td>{{ user.langKey }}</td>
-            <td>
+            <td :data-label="t$('userManagement.langKey')">{{ user.langKey }}</td>
+            <td :data-label="t$('userManagement.profiles')">
               <div v-for="authority of user.authorities" :key="authority">
                 <span class="badge bg-info">{{ authority }}</span>
               </div>
             </td>
-            <td>{{ formatDate(user.createdDate) }}</td>
-            <td>{{ user.lastModifiedBy }}</td>
-            <td>{{ formatDate(user.lastModifiedDate) }}</td>
-            <td class="text-end">
+            <td :data-label="t$('userManagement.createdDate')">{{ formatDate(user.createdDate) || '—' }}</td>
+            <td :data-label="t$('userManagement.lastModifiedBy')">{{ user.lastModifiedBy || '—' }}</td>
+            <td :data-label="t$('userManagement.lastModifiedDate')">{{ formatDate(user.lastModifiedDate) || '—' }}</td>
+            <td class="text-end" :data-label="t$('project1OnlineShoppingWebsiteApp.product.admin.actions')">
               <div class="btn-group">
                 <router-link :to="{ name: 'JhiUserView', params: { userId: user.login } }" custom v-slot="{ navigate }">
                   <button @click="navigate" class="btn btn-info btn-sm details" data-cy="entityDetailsButton">
@@ -150,3 +150,128 @@
 </template>
 
 <script lang="ts" src="./user-management.component.ts"></script>
+
+<style lang="scss">
+@media (max-width: 767px) {
+  .user-management-page {
+    > h2 {
+      font-size: 1.65rem;
+
+      .d-flex {
+        display: grid !important;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        justify-content: stretch !important;
+      }
+
+      .btn {
+        width: 100%;
+        min-height: 44px;
+        margin: 0 !important;
+      }
+    }
+
+    .table-responsive {
+      overflow: visible;
+    }
+
+    .user-management-table {
+      display: block;
+      min-width: 0;
+
+      thead {
+        display: block;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      thead tr {
+        display: flex;
+        width: max-content;
+        min-width: 100%;
+        gap: 0.35rem;
+        padding: 0.5rem 0;
+      }
+
+      th {
+        display: block;
+        border: 1px solid #dbeafe;
+        border-radius: 999px;
+        padding: 0.55rem 0.7rem;
+        background: #eff6ff;
+        color: #1e3a8a;
+        font-size: 0.72rem;
+        white-space: nowrap;
+
+        &:empty {
+          display: none;
+        }
+      }
+
+      tbody {
+        display: grid;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+      }
+
+      tbody tr {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+        min-width: 0;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.85rem;
+        background: #fff;
+      }
+
+      td {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+        font-size: 0.82rem;
+        overflow-wrap: anywhere;
+
+        &::before {
+          content: attr(data-label);
+          color: #64748b;
+          font-size: 0.68rem;
+          font-weight: 700;
+        }
+
+        &:nth-child(3),
+        &:nth-child(4),
+        &:last-child {
+          grid-column: 1 / -1;
+        }
+
+        &:last-child {
+          padding-top: 0.65rem;
+          border-top: 1px solid #e2e8f0;
+        }
+      }
+
+      td:nth-child(4) .btn,
+      td:last-child .btn {
+        min-height: 44px;
+      }
+
+      td:last-child .btn-group {
+        gap: 0.5rem;
+      }
+
+      td:last-child .btn {
+        min-width: 44px;
+        border-radius: 8px !important;
+      }
+    }
+  }
+}
+</style>
